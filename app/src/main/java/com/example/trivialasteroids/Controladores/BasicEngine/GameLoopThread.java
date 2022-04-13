@@ -51,6 +51,12 @@ public class GameLoopThread extends Thread {
                 else
                     sleep(20);
             } catch (Exception ignored) {}
+
+            //ticks
+            System.out.println("Ticks: " + (System.currentTimeMillis() - startTime));
+            
+
+
         }
     }
 }

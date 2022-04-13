@@ -14,7 +14,8 @@ import java.util.function.BiPredicate;
 public class GraphicObject {
 
     private Drawable drawable;   //Imagen que dibujaremos
-    private float posX, posY;   //Posición
+    private double posX;
+    private double posY;   //Posición
     private double incX, incY;   //Velocidad desplazamiento
     private int angulo, rotacion;//Angulo y velocidad rotación
     private int ancho, alto;     //Dimensiones de la imagen
@@ -28,11 +29,15 @@ public class GraphicObject {
     private Boolean bAnima=false;
     private long lastMilisAnimacion;
     private int drawableID;
+    private int tiempoEnPantalla=0;
+    private boolean activo=false;
+
+
     //Donde dibujamos el gráfico (usada en view.ivalidate)
     private View view;
 
     // Para determinar el espacio a borrar (view.ivalidate)
-    public static final int MAX_VELOCIDAD = 20;
+    public static final int MAX_VELOCIDAD = 50;
 
     public GraphicObject(View view, int drawableID ){
         this.view = view;
@@ -70,14 +75,8 @@ public class GraphicObject {
                 frame=(frame+1)%NFrame;
                 lastMilisAnimacion=currentMilis;
             }
-        }
-        else
-
-        {
-//            Resources resources = view.getResources();
-//            Bitmap bmp = BitmapFactory.decodeResource(resources, drawableID);
-//            canvas.drawBitmap(bmp, posX, posY, null);
-                        drawable.draw(canvas);
+        } else {
+            drawable.draw(canvas);
         }
 
         canvas.restore();
@@ -98,9 +97,9 @@ public class GraphicObject {
         {posY=-alto/2;}
 //        angulo += rotacion * factor; //Actualizamos ángulo
     }
-    public void setPos(float PosX, float PosY){
+    public void setPos(double PosX, double PosY){
         posX = PosX;
-        // Si salimos de la pantalla, corregimos posición
+        //Establece nuestra posición
         posY = PosY;
     }
     public double distancia(GraphicObject g) {
@@ -109,6 +108,22 @@ public class GraphicObject {
 
     public boolean verificaColision(GraphicObject g) {
         return(distancia(g) < (radioColision+g.radioColision));
+    }
+
+    public int getTiempoEnPantalla() {
+        return tiempoEnPantalla;
+    }
+
+    public void setTiempoEnPantalla(int tiempoEnPantalla) {
+        this.tiempoEnPantalla = tiempoEnPantalla;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     /**
