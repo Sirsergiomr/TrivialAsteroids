@@ -72,7 +72,7 @@ public class EasyEngine extends SurfaceView {
             marcianos.add(marciano1);
         }
         //Asteroides
-        int nAsteroids = 0;
+        int nAsteroids = 15;
         for (int i = 0; i < nAsteroids; i++) {
             int id;
             switch (rand.nextInt(3)) {
@@ -98,8 +98,8 @@ public class EasyEngine extends SurfaceView {
         }
 
         for (int i = 0; i < asteroides.size(); i++) {
-            posAsteroideY = rand.nextInt((int) (alto / 1.6));
-            posAsteroideX = rand.nextInt((int) (ancho / 1.2));
+            posAsteroideY = rand.nextInt((int) (alto));
+            posAsteroideX = rand.nextInt((int) (ancho /1.6));
             asteroides.get(i).setPos(-posAsteroideX, posAsteroideY);
         }
 
@@ -114,11 +114,13 @@ public class EasyEngine extends SurfaceView {
 
 
         for (int i = 0; i < marcianos.size(); i++) {
-            if (i != 0) {
-                posAsteroideY = (alto / i + 1);// 0+1 1+1 2+1 3+1 4+1
-            } else {
-                posAsteroideY = (float) ((alto / 1.5) - marcianos.get(i).getAlto());
-            }
+//            if (i != 0) {
+//                posAsteroideY = (alto / i + 1);// 0+1 1+1 2+1 3+1 4+1
+//            } else {
+//                posAsteroideY = (float) ((alto / 1.5) - marcianos.get(i).getAlto());
+//            }
+
+            posAsteroideY = alto / 2;
             posAsteroideX = rand.nextInt((int) (ancho / 2) - 2);
             marcianos.get(i).setPos(-posAsteroideX, posAsteroideY);
         }
@@ -262,6 +264,17 @@ public class EasyEngine extends SurfaceView {
                     }
                 }
             }
+            //Evitar que dos o mas marcianos se choquen entre ellos
+            for (int marciano2 = marciano + 1; marciano2 < marcianos.size(); marciano2++) {
+                GraphicObject marcianoActual2 = marcianos.get(marciano2);
+                if (marcianoActual.verificaColision(marcianoActual2)) {
+                    marcianoActual.setPos(marcianoActual.getPosX() , marcianoActual.getPosY()+ 10);
+                    marcianoActual2.setPos(marcianoActual2.getPosX() , marcianoActual2.getPosY()-10);
+                }  
+            }
+
+
+
         }
 
 
