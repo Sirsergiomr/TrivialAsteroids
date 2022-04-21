@@ -31,11 +31,10 @@ public class GraphicObject {
     private int drawableID;
     private int tiempoEnPantalla=0;
     private boolean activo=false;
-
-
+    private String respuestaAsociada;
+    private boolean verdadero;
     //Donde dibujamos el gráfico (usada en view.ivalidate)
     private View view;
-
     // Para determinar el espacio a borrar (view.ivalidate)
     public static final int MAX_VELOCIDAD = 50;
 
@@ -48,6 +47,21 @@ public class GraphicObject {
         radioColision = (alto+ancho)/4;
     }
 
+    public void setVerdadero(boolean verdadero){
+        this.verdadero = verdadero;
+    }
+
+    public boolean getVerdadero(){
+        return verdadero;
+    }
+
+    public void setRespuestaAsociada(String respuestaAsociada){
+        this.respuestaAsociada = respuestaAsociada;
+    }
+
+    public String getRespuestaAsociada(){
+        return respuestaAsociada;
+    }
     public void anima(Boolean bool)
     {
         bAnima=bool;

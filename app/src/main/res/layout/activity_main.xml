@@ -22,39 +22,44 @@
 
     <Button
         android:id="@+id/acribillar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="56dp"
-        android:layout_marginBottom="52dp"
+        android:layout_width="53dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="68dp"
+        android:layout_marginBottom="40dp"
+        app:cornerRadius="15dp"
         app:icon="@drawable/misil1"
-        app:iconTint="#CCFF90"
+        app:iconTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/vida1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="37dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="68dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/nave" />
+        app:srcCompat="@drawable/sprite_heart" />
 
     <ImageView
         android:id="@+id/vida2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@+id/vida1"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/nave" />
+        app:srcCompat="@drawable/sprite_heart" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:text="TextView"
+        android:background="@color/white"
+        android:text="¿Cuales no son capitales extranjeras?"
         android:textAlignment="center"
         android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/vida2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/vida2"
         app:layout_constraintTop_toTopOf="parent" />
@@ -71,6 +76,83 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/sprite_game_over"
-        tools:visibility="invisible" />
+        tools:visibility="visible" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="3dp"
+        android:layout_height="344dp"
+        android:background="#82B1FF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="38dp"
+        android:layout_height="44dp"
+        app:layout_constraintStart_toEndOf="@+id/view"
+        app:layout_constraintTop_toTopOf="@+id/view"
+        app:srcCompat="@drawable/sprite_up" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="38dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:srcCompat="@drawable/sprite_up_down" />
+
+    <Button
+        android:id="@+id/try_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Try again"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:icon="@android:drawable/ic_popup_sync"
+        app:iconTint="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/acribillar"
+        app:layout_constraintEnd_toEndOf="@+id/acribillar"
+        app:layout_constraintStart_toStartOf="@+id/acribillar"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/bt_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/black"
+        app:icon="@android:drawable/ic_media_pause"
+        app:iconTint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/tv_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PAUSE"
+        android:textColor="#FFFFFF"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/surfaceSpaceShip"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/game_over"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_pts"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Pts = 0"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="@+id/bt_pause"
+        app:layout_constraintStart_toStartOf="@+id/bt_pause"
+        app:layout_constraintTop_toBottomOf="@+id/bt_pause" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

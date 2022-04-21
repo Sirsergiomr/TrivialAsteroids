@@ -3,6 +3,7 @@ package com.example.trivialasteroids;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.SurfaceView;
@@ -21,33 +22,22 @@ import java.nio.file.attribute.GroupPrincipal;
  * @author Sirse
  **/
 public class MainActivity extends AppCompatActivity {
-    EasyEngine myGameView;
-    Button acribillar;
-    int vidas = 3;
-    ImageView vida1, vida2,gameOver;
+    private Button bt_start;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //      setContentView(new EasyEngine(this));
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.maininstance_layout);
+        bt_start = findViewById(R.id.bt_start);
 
-        myGameView = (EasyEngine) findViewById(R.id.surfaceSpaceShip);
-        acribillar =  findViewById(R.id.acribillar);
-        vida1 = findViewById(R.id.vida1);
-        vida2 = findViewById(R.id.vida2);
-        gameOver = findViewById(R.id.game_over);
-        
-        acribillar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                myGameView.Dispara();
-            }
+        bt_start.setOnClickListener(view -> {
+            Intent iniciarPartida = new Intent(this, Juego.class);
+            startActivity(iniciarPartida);
         });
-
-
     }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -71,28 +61,5 @@ public class MainActivity extends AppCompatActivity {
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
-    }
-
-    public void bajarVida(){
-        vidas--;
-        if(vidas ==1){
-            vida1.setVisibility(View.GONE);
-        }
-        if(vidas == 2){
-            vida2.setVisibility(View.GONE);
-        }
-        if(vidas == 0){
-            activaGameOver();
-        }
-    }
-    
-    public int getVidas(){
-        return vidas;
-    }
-
-
-    public void activaGameOver() {
-        gameOver.setVisibility(View.VISIBLE);
-        acribillar.setEnabled(false);
     }
 }
