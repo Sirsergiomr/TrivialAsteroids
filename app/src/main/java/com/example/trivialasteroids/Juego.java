@@ -2,6 +2,7 @@ package com.example.trivialasteroids;
 
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -132,6 +133,7 @@ public class Juego extends AppCompatActivity {
         acribillar.setEnabled(false);
         tryAgain.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.GONE);
+        myGameView.getNave().setActivo(false);
     }
 
     public void reinicia() {
