@@ -42,14 +42,13 @@ import static java.lang.Thread.sleep;
 public class EasyEngine extends SurfaceView {
     float alto, ancho, posX, posY, posAsteroideX = ancho, posAsteroideY = alto / 4;
     private static int PASO_VELOCIDAD_MISIL = 1;
-    int puntuacion = 0;
-
+    int xAciertos=0,  yErrores=0, nAciertos=0, nErrores=0;
     static final long FPS = 60;
     long ticksPS = 1000 / FPS;
     long sleepTime;
     private long ultimoProceso = 0;
 
-    int nAsteroids = 0;
+    int nAsteroids = 5;
     int nMarcianos = 5;
 
     Random random = new Random();
@@ -127,13 +126,14 @@ public class EasyEngine extends SurfaceView {
         //  String[] respuestas= {"Madrid", "Lisboa", "Paris", "Dublín", "Tokio", "Buenos Aires", "Washington", "Ottawa"};
 
         try {
-            json2 = new JSONObject("{'result': 'ok', 'message': 'Datos de nivel', 'datos':{ 'pregunta':'Sanciones entre 5000 y 6000€', 'respuestas':[{'contenido': 'Tokio', 'valida': True},{'contenido': 'Madrid', 'valida': False},{'contenido': 'Ottawa', 'valida': True}]}}");
+            json2 = new JSONObject("{'result': 'ok', 'message': 'Datos de nivel', 'datos':{ 'pregunta':'Sanciones entre 5000 y 6000€', 'respuestas':[{'contenido': 'Tokio', 'valida': False},{'contenido': 'Madrid', 'valida': True},{'contenido': 'Ottawa', 'valida': False}]}}");
             json = json2.getJSONObject("datos");
             JSONArray lista = json.getJSONArray("respuestas");
             for (int i = 0; i < lista.length(); i++) {
                 JSONObject obj = lista.getJSONObject(i);
                 String contenido = obj.getString("contenido");
                 boolean valido = obj.getBoolean("valida");
+
                 respuestas.add(new Respuesta(contenido, valido));
             }
         } catch (JSONException e) {
@@ -370,10 +370,11 @@ public class EasyEngine extends SurfaceView {
             if (marciano != -1) {
                 ObjetoParaBorrar = marcianos.get(marciano);
                 if (ObjetoParaBorrar.getVerdadero()) {
-                    puntuacion += 1000;
-                    if (context instanceof Juego) {
-                        ((Juego) context).setPts(puntuacion);
-                    }
+                    ++nAciertos;
+                    anotarPuntos(nAciertos, nErrores);
+                }else{
+                    ++nErrores;
+                    anotarPuntos(nAciertos, nErrores);
                 }
                 marcianos.remove(ObjetoParaBorrar);
             }
@@ -385,6 +386,17 @@ public class EasyEngine extends SurfaceView {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void anotarPuntos(int nAcertadas,int nErrores) {
+        if (context instanceof Juego) {
+            ((Juego) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((Juego) context).compruebaPartida(nAcertadas, nErrores, xAciertos, yErrores);
+                }
+            });
         }
     }
 
@@ -410,6 +422,10 @@ public class EasyEngine extends SurfaceView {
     public void reinicia() {
         nAsteroids = 1;
         nMarcianos = 5;
+        nAciertos = 0;
+        nErrores = 0;
+        xAciertos=0;
+        yErrores=0;
         nave.setActivo(true);
         asteroides.clear();
         misiles.clear();
@@ -481,7 +497,11 @@ public class EasyEngine extends SurfaceView {
 
                 String frase = respuestas.get(random.nextInt(respuestas.size())).getRespuestaAsociada();
                 boolean validez = respuestas.get(random.nextInt(respuestas.size())).getVerdadero();
-
+                if (validez){
+                    ++xAciertos;
+                }else{
+                    ++yErrores;
+                }
                 marciano.setRespuestaAsociada(frase);
                 marciano.setVerdadero(validez);
 

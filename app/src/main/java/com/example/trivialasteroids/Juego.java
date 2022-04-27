@@ -18,11 +18,12 @@ import com.example.trivialasteroids.Controladores.BasicEngine.Functions;
 
 public class Juego extends AppCompatActivity {
     EasyEngine myGameView;
-    Button acribillar, tryAgain, bt_pause;
+    Button acribillar, tryAgain, bt_pause, bt_come_back;
     int vidasExtras = 3;
-    ImageView vida1, vida2, gameOver;
-    boolean pause=false;
-    TextView tv_pause, tv_pts;
+    ImageView vida1, vida2, gameOver, iv_win;
+    boolean pause=false, win =false, gameover=false;
+    TextView tv_pause;
+    TextView tv_partida;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,8 +37,11 @@ public class Juego extends AppCompatActivity {
         gameOver = findViewById(R.id.game_over);
         tryAgain = findViewById(R.id.try_again);
         bt_pause = findViewById(R.id.bt_pause);
+        tv_partida = findViewById(R.id.tv_partida);
         tv_pause = findViewById(R.id.tv_pause);
-        tv_pts = findViewById(R.id.tv_pts);
+
+        iv_win = findViewById(R.id.iv_win);
+        bt_come_back = findViewById(R.id.bt_come_back);
         acribillar.setOnClickListener(view -> {
             myGameView.Dispara();
         });
@@ -47,6 +51,9 @@ public class Juego extends AppCompatActivity {
         });
         bt_pause.setOnClickListener(view -> {
             setPause();
+        });
+        bt_come_back.setOnClickListener(view -> {
+            onBackPressed();
         });
     }
     public void setPause(){
@@ -119,7 +126,7 @@ public class Juego extends AppCompatActivity {
         if (vidasExtras == 2) {
             vida2.setVisibility(View.INVISIBLE);
         }
-        if (vidasExtras == 0) {
+        if (vidasExtras == 0 && win== false) {
             activaGameOver();
         }
     }
@@ -129,6 +136,8 @@ public class Juego extends AppCompatActivity {
     }
 
     public void activaGameOver() {
+        gameover=true;
+        win = false;
         gameOver.setVisibility(View.VISIBLE);
         acribillar.setEnabled(false);
         tryAgain.setVisibility(View.VISIBLE);
@@ -145,12 +154,27 @@ public class Juego extends AppCompatActivity {
         vida1.setVisibility(View.VISIBLE);
         vida2.setVisibility(View.VISIBLE);
         myGameView.reinicia();
-        tv_pts.setText("Pts = "+ 0);
-
     }
 
-    public void setPts(int pts){
-        tv_pts.setText("Pts = "+ pts);
+    public void compruebaPartida(int nAciertos, int nErrores, int xAciertos, int yErrores){
+        if(nAciertos == xAciertos && gameover == false){
+            tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+yErrores);
+            activaWin();
+        }
+        if(nErrores == yErrores && win== false){
+            activaGameOver();
+        }
+    }
+
+    private void activaWin() {
+        win= true;
+        gameover = false;
+        tv_partida.setVisibility(View.VISIBLE);
+        acribillar.setEnabled(false);
+        bt_pause.setVisibility(View.GONE);
+        iv_win.setVisibility(View.VISIBLE);
+        bt_come_back.setVisibility(View.VISIBLE);
+        myGameView.getNave().setActivo(false);
     }
 
     @Override
