@@ -185,6 +185,7 @@ public class Juego extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        myGameView.getGameLoopThread().reanudar();
         Functions.Destroy(myGameView.getGameLoopThread());
     }
 }
