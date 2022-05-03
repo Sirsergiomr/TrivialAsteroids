@@ -16,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine;
 import com.example.trivialasteroids.Controladores.BasicEngine.Functions;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class Juego extends AppCompatActivity {
     EasyEngine myGameView;
     Button acribillar, tryAgain, bt_pause, bt_come_back;
@@ -75,9 +78,7 @@ public class Juego extends AppCompatActivity {
         super.onRestart();
     }
 
-    /* (non-Javadoc)
-     * @see android.app.Activity#onResume()
-     */
+
     @Override
     protected void onResume() {
         Log.i("Estado","juegos.onResume");
@@ -146,6 +147,9 @@ public class Juego extends AppCompatActivity {
     }
 
     public void reinicia() {
+        gameover=false;
+        win = false;
+        pause=false;
         acribillar.setEnabled(true);
         bt_pause.setVisibility(View.VISIBLE);
         tryAgain.setVisibility(View.GONE);
@@ -153,6 +157,7 @@ public class Juego extends AppCompatActivity {
         vidasExtras = 3;
         vida1.setVisibility(View.VISIBLE);
         vida2.setVisibility(View.VISIBLE);
+        tv_pause.setVisibility(View.GONE);
         myGameView.reinicia();
     }
 
