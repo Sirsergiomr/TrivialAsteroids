@@ -378,18 +378,8 @@ public class EasyEngine extends SurfaceView {
             marcianoActual.setPos(marcianoActual.getPosX() - 20, marcianoActual.getPosY() + 20);
             marcianoActual2.setPos(marcianoActual2.getPosX() - 20, marcianoActual2.getPosY() - 20);
         } else if (posicion == 2){
-            if(!modificador3posicion){
-                marcianoActual.setPos(marcianoActual.getPosX() - 20, marcianoActual.getPosY() + 20);
-                marcianoActual2.setPos(marcianoActual2.getPosX() - 20, marcianoActual2.getPosY() - 20);
-                modificador3posicion = true;
-
-            }
-            if(modificador3posicion){
-                marcianoActual.setPos(marcianoActual.getPosX(), marcianoActual.getPosY() + 20);
-                marcianoActual2.setPos(marcianoActual2.getPosX(), marcianoActual2.getPosY() - 20);
-                modificador3posicion = false;
-            }
-
+            marcianoActual.setPos(marcianoActual.getPosX() + 10, marcianoActual.getPosY() + 20);
+            marcianoActual2.setPos(marcianoActual2.getPosX() + 10, marcianoActual2.getPosY() - 20);
         }
     }
 
@@ -466,7 +456,7 @@ public class EasyEngine extends SurfaceView {
         asteroides.clear();
         misiles.clear();
         marcianos.clear();
-        posicion = random.nextInt(2);
+        posicion = random.nextInt(3);
         init();
 
     }
@@ -550,7 +540,7 @@ public class EasyEngine extends SurfaceView {
                 float posMarcianoY = rand.nextInt((int) (alto / 1.6));
                 marciano.setPos(-posMarcianoX, posMarcianoY);
                 posAsteroideY = alto / 2;
-                posAsteroideX = -rand.nextInt((int) (ancho / 2) - 2);//
+                posAsteroideX = (ancho/2)+(ancho/3);//-rand.nextInt((int) (ancho / 2) - 2);
                 marciano.setPos(posAsteroideX, posAsteroideY);
                 marcianos.add(marciano);
             }
