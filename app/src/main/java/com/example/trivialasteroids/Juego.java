@@ -1,12 +1,16 @@
 package com.example.trivialasteroids;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.pm.ActivityInfo;
+import android.database.AbstractCursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,9 +19,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine;
 import com.example.trivialasteroids.Controladores.BasicEngine.Functions;
+import com.example.trivialasteroids.Modelos.Pregunta;
+
+import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Juego extends AppCompatActivity {
     EasyEngine myGameView;
@@ -27,13 +37,15 @@ public class Juego extends AppCompatActivity {
     boolean pause=false, win =false, gameover=false;
     TextView tv_pause;
     TextView tv_partida;
+    TextView tv_pregunta;
+    TextView tv_level;
+    ObjectAnimator animator = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
-        myGameView = (EasyEngine) findViewById(R.id.surfaceSpaceShip);
         acribillar = findViewById(R.id.acribillar);
         vida1 = findViewById(R.id.vida1);
         vida2 = findViewById(R.id.vida2);
@@ -42,7 +54,9 @@ public class Juego extends AppCompatActivity {
         bt_pause = findViewById(R.id.bt_pause);
         tv_partida = findViewById(R.id.tv_partida);
         tv_pause = findViewById(R.id.tv_pause);
-
+        tv_pregunta = findViewById(R.id.tv_pregunta);
+        tv_level = findViewById(R.id.tv_level);
+        myGameView = (EasyEngine) findViewById(R.id.surfaceSpaceShip);
         iv_win = findViewById(R.id.iv_win);
         bt_come_back = findViewById(R.id.bt_come_back);
         acribillar.setOnClickListener(view -> {
@@ -56,6 +70,7 @@ public class Juego extends AppCompatActivity {
             setPause();
         });
         bt_come_back.setOnClickListener(view -> {
+            Functions.Destroy(myGameView.getGameLoopThread());
             onBackPressed();
         });
     }
@@ -160,16 +175,72 @@ public class Juego extends AppCompatActivity {
         tv_pause.setVisibility(View.GONE);
         myGameView.reinicia();
     }
+    boolean finalLv = false;
+    public void NextLevel( int ActualLevel, ArrayList<JSONObject> niveles){
+        if(niveles.size()-1 == ActualLevel){
+            finalLv = true;
+        }else{
+            ++ActualLevel;
+            tv_level.setText("LV "+ActualLevel);
 
-    public void compruebaPartida(int nAciertos, int nErrores, int xAciertos, int yErrores){
-        if(nAciertos == xAciertos && gameover == false){
-            tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+yErrores);
-            activaWin();
-        }
-        if(nErrores == yErrores && win== false){
-            activaGameOver();
+            animationLevel();
+
+            myGameView.setLevel(niveles.get(ActualLevel), ActualLevel);
         }
     }
+
+
+    public void RebootBasicVariables(){
+        myGameView.setNAciertos(0);
+        myGameView.setXAciertos(0);
+        myGameView.setNErrores(0);
+        myGameView.setYErrores(0);
+    }
+    int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
+
+    public void compruebaPartida(int nAciertos, int nErrores, int xAciertos,
+                                 int yErrores, int nPreguntas, int nPAcertadas,
+                                 ArrayList<Pregunta> preguntas,
+                                 ArrayList<JSONObject> niveles, int ActualLevel){
+        if(animator!= null){
+            animator.end();
+        }
+        tv_partida.setVisibility(View.VISIBLE);
+        tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+yErrores);
+        System.out.println("NPREGUNTAS ACERTDAS = "+nPAcertadas);
+
+        if(nAciertos == xAciertos){
+            if(nPreguntas == nPAcertadas && gameover == false && nPAcertadas!=0){
+                //TODO CAMBIO DE NIVEL, POR AHORA ES WIN
+                RebootBasicVariables();
+                NextLevel(ActualLevel, niveles);
+                if(finalLv){
+                    activaWin();
+                }
+            }
+            try {
+                ++siguiente_pregunta;
+                System.out.println("NPREGUNTAS ACERTDAS = "+siguiente_pregunta);
+
+                if(siguiente_pregunta <= preguntas.size()){
+                        RebootBasicVariables();
+                        tv_pregunta.setText(preguntas.get(siguiente_pregunta-1).getPregunta());
+                        myGameView.setCurrentQuestion(preguntas.get(siguiente_pregunta-1));
+                        myGameView.setNPAcertadas(siguiente_pregunta);
+                        tv_partida.setText("¡Cambio de pregunta!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        //Y si las fallas todas en la mima pregunta game over y se reinicia al primer lv
+        if(nErrores == yErrores && win== false && nErrores!=0){
+            activaGameOver();
+        }
+        //TODO Comprobar la cantidad de preguntas respondidas por nivel
+    }
+
 
     private void activaWin() {
         win= true;
@@ -182,10 +253,36 @@ public class Juego extends AppCompatActivity {
         myGameView.getNave().setActivo(false);
     }
 
+    public void setTv_pregunta (String pregunta){
+        tv_pregunta.setText(pregunta);
+    }
+
+    public void setTv_level (String level){
+        tv_level.setText(level);
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
         myGameView.getGameLoopThread().reanudar();
         Functions.Destroy(myGameView.getGameLoopThread());
     }
+    public void animationLevel(){
+        // adding the color to be shown
+        animator = ObjectAnimator.ofInt(tv_level, "textColor", Color.BLUE, Color.RED, Color.GREEN);
+
+        // duration of one color
+        animator.setDuration(500);
+        animator.setEvaluator(new ArgbEvaluator());
+
+        // color will be show in reverse manner
+        animator.setRepeatCount(Animation.REVERSE);
+
+        // It will be repeated up to infinite time
+        animator.setRepeatCount(Animation.INFINITE);
+        animator.start();
+
+    }
+
+
 }

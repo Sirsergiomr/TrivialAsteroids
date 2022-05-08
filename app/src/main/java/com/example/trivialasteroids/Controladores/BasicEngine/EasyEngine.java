@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.example.trivialasteroids.Juego;
 import com.example.trivialasteroids.MainActivity;
 import com.example.trivialasteroids.Modelos.GraphicObject;
+import com.example.trivialasteroids.Modelos.Pregunta;
 import com.example.trivialasteroids.Modelos.Respuesta;
 import com.example.trivialasteroids.R;
 
@@ -42,7 +43,7 @@ import static java.lang.Thread.sleep;
 public class EasyEngine extends SurfaceView {
     float alto, ancho, posX, posY, posAsteroideX = ancho, posAsteroideY = alto / 4;
     private static int PASO_VELOCIDAD_MISIL = 1;
-    int xAciertos = 0, yErrores = 0, nAciertos = 0, nErrores = 0;
+
     static final long FPS = 60;
     long ticksPS = 1000 / FPS;
     long sleepTime;
@@ -51,11 +52,25 @@ public class EasyEngine extends SurfaceView {
     int nAsteroids = 5;
     int nMarcianos = 5;
 
+    int xAciertos = 0,// Datos en relacion con las respuestas
+        yErrores = 0,
+        nAciertos = 0,
+        nErrores = 0;
+
+
+    int nPreguntas = 0;//Cantidad de preguntas de ese nivel
+    int nPAacertadas = -1;//preguntas acertasdas si hay 3 preuntas y aciertas 3 pasas a la siguiente :D
+
+    int ActualLevel = 0;
+
+    Pregunta currentQuestion;
+    JSONObject currentLevel;
+
     Random random = new Random();
     int posicion = random.nextInt(3);
+
     GameLoopThread gameLoopThread = new GameLoopThread(this);
     ThreadPoolExecutor threadPoolMarcianos = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-    ThreadPoolExecutor threadPoolPosicionMarcianos = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
     ThreadPoolExecutor threadPoolAsteroides = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
     GraphicObject nave;
@@ -63,11 +78,12 @@ public class EasyEngine extends SurfaceView {
     GraphicObject asteroide1;
 
     ArrayList<Respuesta> respuestas = new ArrayList<>();
+    ArrayList<JSONObject> niveles = new ArrayList<>();
+    ArrayList<Pregunta> preguntas = new ArrayList<>();
     ArrayList<GraphicObject> asteroides = new ArrayList<>();
     ArrayList<GraphicObject> misiles = new ArrayList<>();
     ArrayList<GraphicObject> marcianos = new ArrayList<>();
 
-    Random rand = new Random();
     Context context;
 
     Paint pincelTexto = new Paint();
@@ -85,6 +101,7 @@ public class EasyEngine extends SurfaceView {
             System.out.println("Generando marcianos");
 //            ((Juego) this.context).Puente("Generando marcianos");
         }
+
         //Texto que seguirá al asteroide
         pincelTexto.setTextSize(18);
         pincelTexto.setColor(Color.WHITE);
@@ -95,6 +112,10 @@ public class EasyEngine extends SurfaceView {
         getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
+                ((Juego)context).setTv_pregunta(currentQuestion.getPregunta());
+
+                System.out.println("Comprobando partida");
+                anotarPuntos(nAciertos, nErrores);
                 try {
                     gameLoopThread.setRunning(true);
                     System.out.println("Ejecutando hilo gameloop");
@@ -118,26 +139,76 @@ public class EasyEngine extends SurfaceView {
     public EasyEngine(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        JsonData();
         DisplayMetrics pantalla = context.getResources().getDisplayMetrics();
         ancho = pantalla.widthPixels;
         alto = pantalla.heightPixels;
+
+        JsonData();
+        Preguntas();
+        Respuestas();
         init();
 
+//        anotarPuntos(nAciertos, nErrores);
     }
-    //NIVELES
+
+    //Carga de datos
     public void JsonData() {
+        nPreguntas = 0;
         //  String[] respuestas= {"Madrid", "Lisboa", "Paris", "Dublín", "Tokio", "Buenos Aires", "Washington", "Ottawa"};
 
         try {
-            json2 = new JSONObject("{'result': 'ok', 'message': 'Datos de nivel', 'datos':{ 'pregunta':'Sanciones entre 5000 y 6000€', 'respuestas':[{'contenido': 'Tokio', 'valida': False},{'contenido': 'Madrid', 'valida': True},{'contenido': 'Ottawa', 'valida': False}]}}");
+            //LV 1
+            json2 = new JSONObject("{'result': 'ok', 'message': 'levels retrieved', 'datos':{'niveles':[{'datoslv':{'preguntas':[{'pregunta': 'Sanciones entre 5000 y 6000€','respuestas':[{'contenido': 'tirar basura desde un vehículo', 'valida': True},{'contenido': 'Exceso de velocidad', 'valida': False},{'contenido': 'Execeder la tasa de alcol ', 'valida': True}]},{'pregunta':'Directiva 1999', 'respuestas':[{'contenido': 'Articulo 1 xxxxxxxxxxx', 'valida': False},{'contenido': 'Articulo 2 xxxxxxxxxxx', 'valida': True},{'contenido': 'Articulo 3 xxxxxxxxxxx', 'valida': False}]}]}},{'datoslv':{'preguntas':[{'pregunta': 'Que tiempo hace hoy','respuestas':[{'contenido': 'Soleado', 'valida': True},{'contenido': 'Invernal', 'valida': False},{'contenido': 'Primaveral ', 'valida': True}]},{'pregunta':'Cual es mi comida favorita', 'respuestas':[{'contenido': 'Brócoli', 'valida': False},{'contenido': 'Melocotón', 'valida': True},{'contenido': 'Pizza Suprema', 'valida': True}]}]}}]}}");
             json = json2.getJSONObject("datos");
-            JSONArray lista = json.getJSONArray("respuestas");
+
+
+            JSONArray nivelesJSON =   json.getJSONArray("niveles");
+
+            for(int nivel = 0; nivel < nivelesJSON.length(); nivel++){
+                JSONObject jsonLV = (JSONObject) nivelesJSON.get(nivel);
+                niveles.add(jsonLV);
+            }
+
+            currentLevel = niveles.get(0);
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void Preguntas(){
+        try {
+            JSONArray preguntasJson = currentLevel.getJSONObject("datoslv").getJSONArray("preguntas");
+            for(int pregunta = 0; pregunta < preguntasJson.length(); pregunta++){
+                JSONObject jsonP = (JSONObject) preguntasJson.get(pregunta);
+                System.out.println(jsonP.getString("pregunta"));
+                preguntas.add(new Pregunta(jsonP));
+                ++nPreguntas;
+                System.out.println("Preguntas cargadas = "+nPreguntas+"/"+preguntasJson.length());
+            }
+
+
+            if (preguntas.size() > 0) {
+                System.out.println("PRIMERA PREGUNTA = " + preguntas.get(0).getPregunta());
+                currentQuestion = preguntas.get(0);
+                System.out .println("Primera pregunta cargada correctamente");
+            }else{
+                System.out.println("Fallo de carga, cargando pregunta por defecto");
+    //                System.out.println("Cargando por pregunta por defecto");
+                currentQuestion = new Pregunta(new JSONObject("{'pregunta':'Si ves esto es que no hay preguntas', 'respuestas':[{'contenido': 'Falsa', 'valida': False},{'contenido': 'Verdadera', 'valida': True},{'contenido': 'Falsa', 'valida': False}]}"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+
+        }
+    };
+    public void Respuestas(){
+        try {
+            JSONArray lista = currentQuestion.getRespuestas();
             for (int i = 0; i < lista.length(); i++) {
                 JSONObject obj = lista.getJSONObject(i);
                 String contenido = obj.getString("contenido");
                 boolean valido = obj.getBoolean("valida");
-
                 respuestas.add(new Respuesta(contenido, valido));
             }
         } catch (JSONException e) {
@@ -243,19 +314,19 @@ public class EasyEngine extends SurfaceView {
 
     //Update Positions and Collisions
     public void updatePhysics(boolean pausa) {
-        long ahora = System.currentTimeMillis();
-        // No hagas nada si el período de proceso no se ha cumplido.
-        if (ultimoProceso + ticksPS > ahora) {
-            return;
-        }
+//        long ahora = System.currentTimeMillis();
+//        // No hagas nada si el período de proceso no se ha cumplido.
+//        if (ultimoProceso + ticksPS > ahora) {
+//            return;
+//        }
+//        double retardo = ultimoProceso;
+//        if (!pausa) {
+//            retardo = sleepTime;
+//        }
+//
+//        ultimoProceso = ahora;
         controlThreat();
-        double retardo = ultimoProceso;
-        if (!pausa) {
-            retardo = sleepTime;
-        }
-
-        ultimoProceso = ahora;
-        int velocidad = rand.nextInt(15);
+        int velocidad = random.nextInt(15);
 
         for (GraphicObject asteroide : asteroides) {
             asteroide.setIncX(-0.5);
@@ -315,7 +386,10 @@ public class EasyEngine extends SurfaceView {
                             nave.setActivo(false);
                             ((Juego) context).activaGameOver();
                         }
-                        destruyendoObejeto(-1, -1, marciano);
+                        //No se llama a destruir objeto para evitar la verificación de puntos y por tanto penalizar directamente al jugador
+                        marcianos.remove(marcianoActual);
+                        ++nErrores;
+                        anotarPuntos(nAciertos, nErrores);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -418,7 +492,9 @@ public class EasyEngine extends SurfaceView {
             ((Juego) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((Juego) context).compruebaPartida(nAcertadas, nErrores, xAciertos, yErrores);
+                    ((Juego) context).compruebaPartida(nAcertadas, nErrores, xAciertos,
+                            yErrores,nPreguntas,nPAacertadas ,preguntas,
+                            niveles, ActualLevel);
                 }
             });
         }
@@ -446,7 +522,7 @@ public class EasyEngine extends SurfaceView {
     public void reinicia() {
         gameLoopThread.pausar();
         modificador3posicion=false;
-        nAsteroids = 1;
+        nAsteroids = 5;
         nMarcianos = 5;
         nAciertos = 0;
         nErrores = 0;
@@ -458,7 +534,7 @@ public class EasyEngine extends SurfaceView {
         marcianos.clear();
         posicion = random.nextInt(3);
         init();
-
+        anotarPuntos(nAciertos, nErrores);
     }
 
     public GameLoopThread getGameLoopThread() {
@@ -469,6 +545,40 @@ public class EasyEngine extends SurfaceView {
         return nave;
     }
 
+    public void setNPAcertadas(int nPAcertadas) {
+        this.nPAacertadas = nPAcertadas;
+    }
+
+    public void setCurrentQuestion(Pregunta pregunta) {
+        currentQuestion = pregunta;
+        respuestas.clear();
+        marcianos.clear();
+        Respuestas();
+        generaEnemigos();
+    }
+
+    public void setNAciertos(int i) {
+        nAciertos = i;
+    }
+
+    public void setXAciertos(int i) {
+        xAciertos = i;
+    }
+
+    public void setNErrores(int i) {
+        nErrores = i;
+    }
+
+    public void setYErrores(int i) {
+        yErrores = i;
+    }
+
+    public void setLevel(JSONObject jsonObject, int actualLevel) {
+        this.ActualLevel = actualLevel;
+        currentLevel = jsonObject;
+        Preguntas();
+    }
+
     //HEBRAS
     class HebraAsteroides extends Thread {
         @Override
@@ -477,9 +587,9 @@ public class EasyEngine extends SurfaceView {
             while (nAsteroids > asteroides.size()) {
                 synchronized (this) {
                     int id;
-                    switch (rand.nextInt(3)) {
+                    switch (random.nextInt(3)) {
                         case 0:
-                            id = R.drawable.asterioidpro;
+                            id = R.drawable.asteroide2;
                             break;
                         case 1:
                             id = R.drawable.asteroide2;
@@ -491,13 +601,13 @@ public class EasyEngine extends SurfaceView {
                             id = R.drawable.asteroide2;
                     }
                     asteroide1 = new GraphicObject(EasyEngine.this, id);
-                    if (id == R.drawable.asterioidpro) {
-                        asteroide1.setAncho(223);
-                        asteroide1.setAlto(140);
-                        asteroide1.setRadioColision((223 + 140) / 4);
-                    }
+//                    if (id == R.drawable.asterioidpro) {
+//                        asteroide1.setAncho(223);
+//                        asteroide1.setAlto(140);
+//                        asteroide1.setRadioColision((223 + 140) / 4);
+//                    }
 
-                    posAsteroideY = rand.nextInt((int) (alto));//rand.nextInt((int) (ancho /4)
+                    posAsteroideY = random.nextInt((int) (alto));//rand.nextInt((int) (ancho /4)
                     if (posAsteroideY <= 200) {
                         posAsteroideY = 200;
                     }
@@ -537,7 +647,7 @@ public class EasyEngine extends SurfaceView {
                 marciano.setVerdadero(validez);
 
                 float posMarcianoX = (int) (ancho / 2) - 2;
-                float posMarcianoY = rand.nextInt((int) (alto / 1.6));
+                float posMarcianoY = random.nextInt((int) (alto / 1.6));
                 marciano.setPos(-posMarcianoX, posMarcianoY);
                 posAsteroideY = alto / 2;
                 posAsteroideX = (ancho/2)+(ancho/3);//-rand.nextInt((int) (ancho / 2) - 2);
