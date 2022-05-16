@@ -49,7 +49,7 @@ public class EasyEngine extends SurfaceView {
     long sleepTime;
     private long ultimoProceso = 0;
 
-    int nAsteroids = 5;
+    int nAsteroids = 10;
     int nMarcianos = 5;
 
     int xAciertos = 0,// Datos en relacion con las respuestas
@@ -95,14 +95,14 @@ public class EasyEngine extends SurfaceView {
         generaNave();
         //generas los enemigos
         generaEnemigos();
-        while (nAsteroids > asteroides.size()){
-            System.out.println("Generando asteroides");
-//            ((Juego) this.context).Puente("Generando asteroides");
-        }
-        while(nMarcianos > marcianos.size()){
-            System.out.println("Generando marcianos");
-//            ((Juego) this.context).Puente("Generando marcianos");
-        }
+//        while (nAsteroids > asteroides.size()){
+//            System.out.println("Generando asteroides");
+////            ((Juego) this.context).Puente("Generando asteroides");
+//        }
+//        while(nMarcianos > marcianos.size()){
+//            System.out.println("Generando marcianos");
+////            ((Juego) this.context).Puente("Generando marcianos");
+//        }
 
         //Texto que seguirá al asteroide
         pincelTexto.setTextSize(18);
@@ -142,22 +142,21 @@ public class EasyEngine extends SurfaceView {
         super(context, attrs);
         this.context = context;
         DisplayMetrics pantalla = context.getResources().getDisplayMetrics();
+
         ancho = pantalla.widthPixels;
         alto = pantalla.heightPixels;
+
+        // = resul
 
         JsonData();
         Preguntas();
         Respuestas();
         init();
-
-//        anotarPuntos(nAciertos, nErrores);
     }
 
     //Carga de datos
     public void JsonData() {
         nPreguntas = 0;
-        //  String[] respuestas= {"Madrid", "Lisboa", "Paris", "Dublín", "Tokio", "Buenos Aires", "Washington", "Ottawa"};
-
         try {
             //LV 1
             json2 = new JSONObject("{'result': 'ok', 'message': 'levels retrieved', 'datos':{'niveles':[{'datoslv':{'preguntas':[{'pregunta': 'Sanciones entre 5000 y 6000€','respuestas':[{'contenido': 'tirar basura desde un vehículo', 'valida': True},{'contenido': 'Exceso de velocidad', 'valida': False},{'contenido': 'Execeder la tasa de alcol ', 'valida': True}]},{'pregunta':'Directiva 1999', 'respuestas':[{'contenido': 'Articulo 1 xxxxxxxxxxx', 'valida': False},{'contenido': 'Articulo 2 xxxxxxxxxxx', 'valida': True},{'contenido': 'Articulo 3 xxxxxxxxxxx', 'valida': False}]}]}},{'datoslv':{'preguntas':[{'pregunta': 'Que tiempo hace hoy','respuestas':[{'contenido': 'Soleado', 'valida': True},{'contenido': 'Invernal', 'valida': False},{'contenido': 'Primaveral ', 'valida': True}]},{'pregunta':'Cual es mi comida favorita', 'respuestas':[{'contenido': 'Brócoli', 'valida': False},{'contenido': 'Melocotón', 'valida': True},{'contenido': 'Pizza Suprema', 'valida': True}]}]}}]}}");
@@ -224,7 +223,7 @@ public class EasyEngine extends SurfaceView {
         nave = new GraphicObject(this, R.drawable.sprite_space_ship);
         nave.setAlto(220);
         nave.setAncho(220);
-        nave.setRadioColision((220 + 220) / 4);
+        nave.setRadioColision((220 +   220) / 4);
         nave.setActivo(true);
     }
     private void generaEnemigos() {
@@ -241,6 +240,8 @@ public class EasyEngine extends SurfaceView {
 
         if (x >= 10 && x < (10 + nave.getAncho()) && nave.isActivo()) {
             posY = y;
+        }else{
+            posY = -10;
         }
 
         return true;
@@ -298,35 +299,24 @@ public class EasyEngine extends SurfaceView {
             }
         }
 
-        sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
-        try {
-            if (sleepTime > 0)
-                synchronized (gameLoopThread) {
-                    gameLoopThread.sleep(sleepTime);
-                }
-            else
-                synchronized (gameLoopThread) {
-                    gameLoopThread.sleep(20);
-                }
-        } catch (Exception ignored) {
-        }
-        System.out.println("Ticks: " + (System.currentTimeMillis() - startTime));
-        System.out.println("SLEEPTIME = " + sleepTime);
+//        sleepTime = ticksPS - (System.currentTimeMillis() - startTime);
+//
+//            if (sleepTime > 0)
+//                synchronized (gameLoopThread) {
+//                    gameLoopThread.sleep(sleepTime);
+//                }
+//            else
+//                synchronized (gameLoopThread) {
+//                    gameLoopThread.sleep(20);
+//                }
+//        } catch (Exception ignored) {
+//        }
+//        System.out.println("Ticks: " + (System.currentTimeMillis() - startTime));
+//        System.out.println("SLEEPTIME = " + sleepTime);
     }
 
     //Update Positions and Collisions
     public void updatePhysics(boolean pausa) {
-//        long ahora = System.currentTimeMillis();
-//        // No hagas nada si el período de proceso no se ha cumplido.
-//        if (ultimoProceso + ticksPS > ahora) {
-//            return;
-//        }
-//        double retardo = ultimoProceso;
-//        if (!pausa) {
-//            retardo = sleepTime;
-//        }
-//
-//        ultimoProceso = ahora;
         controlThreat();
         threadPoolMovimientoAsteroides.execute(new HebraMovimientoAsteroides());
         threadPoolMovimientoMarcianos.execute(new HebraMovimientoMarcianos());
@@ -404,6 +394,7 @@ public class EasyEngine extends SurfaceView {
                     anotarPuntos(nAciertos, nErrores);
                 }
                 marcianos.remove(ObjetoParaBorrar);
+                threadPoolAsteroides.execute(new HebraMarcianos());
             }
 
             if (misil != -1) {
@@ -451,8 +442,6 @@ public class EasyEngine extends SurfaceView {
     public void reinicia() {
         gameLoopThread.pausar();
         modificador3posicion=false;
-        nAsteroids = 5;
-        nMarcianos = 5;
         nAciertos = 0;
         nErrores = 0;
         xAciertos = 0;
@@ -540,11 +529,18 @@ public class EasyEngine extends SurfaceView {
                     if (posAsteroideY <= 200) {
                         posAsteroideY = 200;
                     }
+
+                    posAsteroideX = random.nextInt((int)ancho);
+
+                    while(posAsteroideX >ancho+asteroide1.getAncho() || posAsteroideX==ancho+asteroide1.getAncho() || posAsteroideX == nave.getPosX()){
+                        posAsteroideX = random.nextInt((int)ancho);
+                    }
+
                     posAsteroideX = ancho;
                     asteroide1.setPos(posAsteroideX, posAsteroideY);
                     asteroides.add(asteroide1);
                     try {
-                        sleep(1000);
+                        sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

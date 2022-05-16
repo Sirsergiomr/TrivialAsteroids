@@ -73,9 +73,11 @@
         android:layout_marginTop="52dp"
         android:text="Start"
         android:textColor="@color/black"
+        android:textSize="14pt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView4" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView4"
+        app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent" />
 
     <Button
         android:id="@+id/button3"
