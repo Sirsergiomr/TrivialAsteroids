@@ -46,6 +46,7 @@ public class Juego extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
+
         acribillar = findViewById(R.id.acribillar);
         vida1 = findViewById(R.id.vida1);
         vida2 = findViewById(R.id.vida2);
@@ -56,7 +57,7 @@ public class Juego extends AppCompatActivity {
         tv_pause = findViewById(R.id.tv_pause);
         tv_pregunta = findViewById(R.id.tv_pregunta);
         tv_level = findViewById(R.id.tv_level);
-        myGameView = (EasyEngine) findViewById(R.id.surfaceSpaceShip);
+        myGameView = findViewById(R.id.surfaceSpaceShip);
         iv_win = findViewById(R.id.iv_win);
         bt_come_back = findViewById(R.id.bt_come_back);
         acribillar.setOnClickListener(view -> {
@@ -174,6 +175,8 @@ public class Juego extends AppCompatActivity {
         vida2.setVisibility(View.VISIBLE);
         tv_pause.setVisibility(View.GONE);
         myGameView.reinicia();
+        RebootBasicVariables();
+        setTv_partida("¡A disparar!");
     }
     boolean finalLv = false;
     public void NextLevel( int ActualLevel, ArrayList<JSONObject> niveles){
@@ -284,5 +287,7 @@ public class Juego extends AppCompatActivity {
 
     }
 
-
+    public void setTv_partida(String mensaje) {
+        this.tv_partida.setText(mensaje);
+    }
 }
