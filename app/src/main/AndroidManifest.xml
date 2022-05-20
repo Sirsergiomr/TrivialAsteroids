@@ -12,11 +12,13 @@
 
         <activity
             android:name=".Juego"
-            android:label="@string/title_activity_juego">
+            android:label="@string/title_activity_juego"
+            android:exported="true">
 
         </activity>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
