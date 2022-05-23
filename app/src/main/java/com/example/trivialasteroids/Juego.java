@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.pm.ActivityInfo;
 import android.database.AbstractCursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine;
+import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
 import com.example.trivialasteroids.Controladores.BasicEngine.Functions;
 import com.example.trivialasteroids.Modelos.Pregunta;
 
@@ -30,7 +32,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class Juego extends AppCompatActivity {
-    EasyEngine myGameView;
+//    EasyEngine myGameView;
+    EasyEngineV1 rocket;
     Button acribillar, tryAgain, bt_pause, bt_come_back;
     int vidasExtras = 3;
     ImageView vida1, vida2, gameOver, iv_win;
@@ -40,6 +43,7 @@ public class Juego extends AppCompatActivity {
     TextView tv_pregunta;
     TextView tv_level;
     ObjectAnimator animator = null;
+    int ndisparos=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,37 +60,45 @@ public class Juego extends AppCompatActivity {
         tv_pause = findViewById(R.id.tv_pause);
         tv_pregunta = findViewById(R.id.tv_pregunta);
         tv_level = findViewById(R.id.tv_level);
-        myGameView = (EasyEngine) findViewById(R.id.surfaceSpaceShip);
+        rocket = findViewById(R.id.surfaceSpaceShip);
         iv_win = findViewById(R.id.iv_win);
         bt_come_back = findViewById(R.id.bt_come_back);
+
         acribillar.setOnClickListener(view -> {
-            myGameView.Dispara();
+            ndisparos++;
+            System.out.println("DISPARA DESDE UI = "+ ndisparos);
+            rocket.Dispara();
         });
-        tryAgain.setOnClickListener(view -> {
-            //TODO Volver a 0 todos los valores.
-            reinicia();
-        });
+//        tryAgain.setOnClickListener(view -> {
+//            //TODO Volver a 0 todos los valores.
+//            reinicia();
+//        });
         bt_pause.setOnClickListener(view -> {
-            setPause();
+            ndisparos++;
+            System.out.println("DISPARA DESDE UI = "+ ndisparos);
+            rocket.Dispara();
         });
         bt_come_back.setOnClickListener(view -> {
-            Functions.Destroy(myGameView.getGameLoopThread());
+//            Functions.Destroy(myGameView.getGameLoopThread());
             onBackPressed();
         });
     }
+
+
     public void setPause(){
         if(!pause){
             pause=true;
-            myGameView.getGameLoopThread().pausar();
+//            myGameView.getGameLoopThread().pausar();
             tryAgain.setVisibility(View.VISIBLE);
             tv_pause.setVisibility(View.VISIBLE);
         }else{
             tv_pause.setVisibility(View.GONE);
             pause=false;
-            myGameView.getGameLoopThread().reanudar();
+//            myGameView.getGameLoopThread().reanudar();
             tryAgain.setVisibility(View.GONE);
         }
     }
+
     @Override
     protected void onRestart() {
         Log.i("Estado","juegos.onRestart");
@@ -98,12 +110,12 @@ public class Juego extends AppCompatActivity {
     protected void onResume() {
         Log.i("Estado","juegos.onResume");
         super.onResume();
-        myGameView.getGameLoopThread().reanudar();
+//        myGameView.getGameLoopThread().reanudar();
     }
     @Override
     protected void onPause() {
         super.onPause();
-        myGameView.getGameLoopThread().pausar();
+//        myGameView.getGameLoopThread().pausar();
     }
     @Override
     protected void onDestroy() {
@@ -155,10 +167,10 @@ public class Juego extends AppCompatActivity {
         gameover=true;
         win = false;
         gameOver.setVisibility(View.VISIBLE);
-        acribillar.setEnabled(false);
+//        acribillar.setEnabled(false);
         tryAgain.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.GONE);
-        myGameView.getNave().setActivo(false);
+        rocket.getNave().setActivo(false);
     }
 
     public void reinicia() {
@@ -173,7 +185,7 @@ public class Juego extends AppCompatActivity {
         vida1.setVisibility(View.VISIBLE);
         vida2.setVisibility(View.VISIBLE);
         tv_pause.setVisibility(View.GONE);
-        myGameView.reinicia();
+//        myGameView.reinicia();
     }
     boolean finalLv = false;
     public void NextLevel( int ActualLevel, ArrayList<JSONObject> niveles){
@@ -185,16 +197,16 @@ public class Juego extends AppCompatActivity {
 
             animationLevel();
 
-            myGameView.setLevel(niveles.get(ActualLevel), ActualLevel);
+            rocket.setLevel(niveles.get(ActualLevel), ActualLevel);
         }
     }
 
 
     public void RebootBasicVariables(){
-        myGameView.setNAciertos(0);
-        myGameView.setXAciertos(0);
-        myGameView.setNErrores(0);
-        myGameView.setYErrores(0);
+        rocket.setNAciertos(0);
+        rocket.setXAciertos(0);
+        rocket.setNErrores(0);
+        rocket.setYErrores(0);
     }
     int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
 
@@ -223,11 +235,11 @@ public class Juego extends AppCompatActivity {
                 System.out.println("NPREGUNTAS ACERTDAS = "+siguiente_pregunta);
 
                 if(siguiente_pregunta <= preguntas.size()){
-                        RebootBasicVariables();
-                        tv_pregunta.setText(preguntas.get(siguiente_pregunta-1).getPregunta());
-                        myGameView.setCurrentQuestion(preguntas.get(siguiente_pregunta-1));
-                        myGameView.setNPAcertadas(siguiente_pregunta);
-                        tv_partida.setText("¡Cambio de pregunta!");
+                    RebootBasicVariables();
+                    tv_pregunta.setText(preguntas.get(siguiente_pregunta - 1).getPregunta());
+                    rocket.setCurrentQuestion(preguntas.get(siguiente_pregunta - 1));
+                    rocket.setNPAcertadas(siguiente_pregunta);
+                    tv_partida.setText("¡Cambio de pregunta!");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -250,7 +262,7 @@ public class Juego extends AppCompatActivity {
         bt_pause.setVisibility(View.GONE);
         iv_win.setVisibility(View.VISIBLE);
         bt_come_back.setVisibility(View.VISIBLE);
-        myGameView.getNave().setActivo(false);
+        rocket.getNave().setActivo(false);
     }
 
     public void setTv_pregunta (String pregunta){
@@ -264,8 +276,8 @@ public class Juego extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        myGameView.getGameLoopThread().reanudar();
-        Functions.Destroy(myGameView.getGameLoopThread());
+//        myGameView.getGameLoopThread().reanudar();
+//        Functions.Destroy(myGameView.getGameLoopThread());
     }
     public void animationLevel(){
         // adding the color to be shown

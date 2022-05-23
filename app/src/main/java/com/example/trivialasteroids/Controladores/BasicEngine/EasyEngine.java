@@ -39,17 +39,18 @@ import static java.lang.Thread.sleep;
 
 /**
  * @author Sirse
+ *
+ * OLD ENGINE
  */
 public class EasyEngine extends SurfaceView {
     float alto, ancho, posX, posY, posAsteroideX = ancho, posAsteroideY = alto / 4;
     private static int PASO_VELOCIDAD_MISIL = 1;
-
     static final long FPS = 60;
     long ticksPS = 1000 / FPS;
     long sleepTime;
     private long ultimoProceso = 0;
 
-    int nAsteroids = 5;
+    int nAsteroids = 10;
     int nMarcianos = 5;
 
     int xAciertos = 0,// Datos en relacion con las respuestas
@@ -156,8 +157,6 @@ public class EasyEngine extends SurfaceView {
     //Carga de datos
     public void JsonData() {
         nPreguntas = 0;
-        //  String[] respuestas= {"Madrid", "Lisboa", "Paris", "Dublín", "Tokio", "Buenos Aires", "Washington", "Ottawa"};
-
         try {
             //LV 1
             json2 = new JSONObject("{'result': 'ok', 'message': 'levels retrieved', 'datos':{'niveles':[{'datoslv':{'preguntas':[{'pregunta': 'Sanciones entre 5000 y 6000€','respuestas':[{'contenido': 'tirar basura desde un vehículo', 'valida': True},{'contenido': 'Exceso de velocidad', 'valida': False},{'contenido': 'Execeder la tasa de alcol ', 'valida': True}]},{'pregunta':'Directiva 1999', 'respuestas':[{'contenido': 'Articulo 1 xxxxxxxxxxx', 'valida': False},{'contenido': 'Articulo 2 xxxxxxxxxxx', 'valida': True},{'contenido': 'Articulo 3 xxxxxxxxxxx', 'valida': False}]}]}},{'datoslv':{'preguntas':[{'pregunta': 'Que tiempo hace hoy','respuestas':[{'contenido': 'Soleado', 'valida': True},{'contenido': 'Invernal', 'valida': False},{'contenido': 'Primaveral ', 'valida': True}]},{'pregunta':'Cual es mi comida favorita', 'respuestas':[{'contenido': 'Brócoli', 'valida': False},{'contenido': 'Melocotón', 'valida': True},{'contenido': 'Pizza Suprema', 'valida': True}]}]}}]}}");
@@ -266,7 +265,6 @@ public class EasyEngine extends SurfaceView {
             lienzo.drawText(marciano.getRespuestaAsociada(), (float) marciano.getPosX(), (float) marciano.getPosY(), pincelTexto);
         }
         for (int misil = 0; misil < misiles.size(); misil++) {
-
             GraphicObject misilActual = misiles.get(misil);
             if (misilActual.isActivo()) {
                 misilActual.DrawGraphic(lienzo);
@@ -316,17 +314,6 @@ public class EasyEngine extends SurfaceView {
 
     //Update Positions and Collisions
     public void updatePhysics(boolean pausa) {
-//        long ahora = System.currentTimeMillis();
-//        // No hagas nada si el período de proceso no se ha cumplido.
-//        if (ultimoProceso + ticksPS > ahora) {
-//            return;
-//        }
-//        double retardo = ultimoProceso;
-//        if (!pausa) {
-//            retardo = sleepTime;
-//        }
-//
-//        ultimoProceso = ahora;
         controlThreat();
         threadPoolMovimientoAsteroides.execute(new HebraMovimientoAsteroides());
         threadPoolMovimientoMarcianos.execute(new HebraMovimientoMarcianos());
@@ -393,6 +380,7 @@ public class EasyEngine extends SurfaceView {
                 ObjetoParaBorrar = asteroides.get(asteroid);
                 asteroides.remove(ObjetoParaBorrar);
                 threadPoolAsteroides.execute(new HebraAsteroides());
+                ObjetoParaBorrar.setActivo(false);
             }
             if (marciano != -1) {
                 ObjetoParaBorrar = marcianos.get(marciano);
@@ -403,7 +391,7 @@ public class EasyEngine extends SurfaceView {
                     ++nErrores;
                     anotarPuntos(nAciertos, nErrores);
                 }
-                marcianos.remove(ObjetoParaBorrar);
+               marcianos.remove(ObjetoParaBorrar);
             }
 
             if (misil != -1) {
@@ -530,18 +518,18 @@ public class EasyEngine extends SurfaceView {
                             id = R.drawable.asteroide2;
                     }
                     asteroide1 = new GraphicObject(EasyEngine.this, id);
-//                    if (id == R.drawable.asterioidpro) {
-//                        asteroide1.setAncho(223);
-//                        asteroide1.setAlto(140);
-//                        asteroide1.setRadioColision((223 + 140) / 4);
-//                    }
 
                     posAsteroideY = random.nextInt((int) (alto));//rand.nextInt((int) (ancho /4)
                     if (posAsteroideY <= 200) {
                         posAsteroideY = 200;
                     }
-                    posAsteroideX = ancho;
+
+                    while(posAsteroideX >ancho+asteroide1.getAncho() || posAsteroideX==ancho+asteroide1.getAncho() || posAsteroideX == nave.getPosX()){
+                        posAsteroideX = random.nextInt((int)ancho);
+                    }
+
                     asteroide1.setPos(posAsteroideX, posAsteroideY);
+                    asteroide1.setActivo(true);
                     asteroides.add(asteroide1);
                     try {
                         sleep(1000);
@@ -579,7 +567,11 @@ public class EasyEngine extends SurfaceView {
                 float posMarcianoY = random.nextInt((int) (alto / 1.6));
                 marciano.setPos(-posMarcianoX, posMarcianoY);
                 posAsteroideY = alto / 2;
-                posAsteroideX = (ancho/2)+(ancho/3);//-rand.nextInt((int) (ancho / 2) - 2);
+
+                while(posAsteroideX >ancho+asteroide1.getAncho() || posAsteroideX==ancho+asteroide1.getAncho() || posAsteroideX == nave.getPosX()){
+                    posAsteroideX = random.nextInt((int)ancho);
+                }
+
                 marciano.setPos(posAsteroideX, posAsteroideY);
                 marcianos.add(marciano);
             }
@@ -624,7 +616,6 @@ public class EasyEngine extends SurfaceView {
                     }
                 }
             }
-
         }
     }
 

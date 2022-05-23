@@ -8,11 +8,12 @@
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine
+    <com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1
         android:id="@+id/surfaceSpaceShip"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:orientation="horizontal"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,15 +41,17 @@
 
     <Button
         android:id="@+id/acribillar"
-        android:layout_width="53dp"
-        android:layout_height="49dp"
-        android:layout_marginEnd="68dp"
-        android:layout_marginBottom="40dp"
+        android:layout_width="100dp"
+        android:layout_height="52dp"
+        android:layout_marginEnd="32dp"
+        android:text="SHOT"
         app:cornerRadius="15dp"
         app:icon="@drawable/misil1"
         app:iconTint="@color/black"
+        android:enabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="#FFFFFF" />
 
     <ImageView
         android:id="@+id/vida1"
@@ -125,16 +128,17 @@
         android:id="@+id/try_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="68dp"
         android:text="Try again"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:icon="@android:drawable/ic_popup_sync"
         app:iconTint="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/acribillar"
-        app:layout_constraintEnd_toEndOf="@+id/acribillar"
-        app:layout_constraintStart_toStartOf="@+id/acribillar"
-        tools:visibility="visible" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="invisible" />
 
     <Button
         android:id="@+id/bt_pause"
