@@ -50,7 +50,7 @@ public class Juego extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         setContentView(R.layout.activity_main);
-        acribillar = findViewById(R.id.acribillar);
+//        acribillar = findViewById(R.id.acribillar);
         vida1 = findViewById(R.id.vida1);
         vida2 = findViewById(R.id.vida2);
         gameOver = findViewById(R.id.game_over);
@@ -64,11 +64,11 @@ public class Juego extends AppCompatActivity {
         iv_win = findViewById(R.id.iv_win);
         bt_come_back = findViewById(R.id.bt_come_back);
 
-        acribillar.setOnClickListener(view -> {
-            ndisparos++;
-            System.out.println("DISPARA DESDE UI = "+ ndisparos);
-            rocket.Dispara();
-        });
+//        acribillar.setOnClickListener(view -> {
+//            ndisparos++;
+//            System.out.println("DISPARA DESDE UI = "+ ndisparos);
+//            rocket.Dispara();
+//        });
 //        tryAgain.setOnClickListener(view -> {
 //            //TODO Volver a 0 todos los valores.
 //            reinicia();

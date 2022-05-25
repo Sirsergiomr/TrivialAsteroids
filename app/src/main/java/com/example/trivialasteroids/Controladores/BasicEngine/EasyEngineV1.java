@@ -1,8 +1,7 @@
 package com.example.trivialasteroids.Controladores.BasicEngine;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,6 +17,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.MotionEventCompat;
 
 import com.example.trivialasteroids.Juego;
 import com.example.trivialasteroids.Modelos.GraphicObject;
@@ -53,22 +53,23 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     private int touchY;
 
     //Elementos para la lógica del juego
-    private List<GraphicObject> misiles = Collections.synchronizedList(new ArrayList<>());
-    private List<GraphicObject> asteroides = Collections.synchronizedList(new ArrayList<>());
-    private  ArrayList<JSONObject> niveles = new ArrayList<>();
-    private  ArrayList<Pregunta> preguntas = new ArrayList<>();
-    private  ArrayList<Respuesta> respuestas = new ArrayList<>();
-    private  ArrayList<GraphicObject> marcianos = new ArrayList<>();
-    private GraphicObject nave = new GraphicObject(this,R.drawable.sprite_space_ship);
+    private final List<GraphicObject> misiles = Collections.synchronizedList(new ArrayList<>());
+    private final List<GraphicObject> asteroides = Collections.synchronizedList(new ArrayList<>());
+    private final ArrayList<JSONObject> niveles = new ArrayList<>();
+    private final ArrayList<Pregunta> preguntas = new ArrayList<>();
+    private final ArrayList<Respuesta> respuestas = new ArrayList<>();
+    private final ArrayList<GraphicObject> marcianos = new ArrayList<>();
+    private final GraphicObject nave = new GraphicObject(this,R.drawable.sprite_space_ship);
     private GraphicObject marciano;
     private GraphicObject asteroide1;
+    private GraphicObject bala = new GraphicObject(this, R.drawable.ic_whatshot);
     private Pregunta currentQuestion;
     private JSONObject currentLevel;
     private static final int PASO_VELOCIDAD_MISIL = 1;
     private int VELOCIDAD_MISIL= 10 ;
     private int VELOCIDAD_ASTEROIDE= 5 ;
     private int VELOCIDAD_MARCIANO= 5;
-    private final int nAsteroids = 0;
+    private final int nAsteroids = 5;
     private final int nMarcianos = 0;//Cantidad de enemigos
 
     private int xAciertos = 0;// Datos en relacion con las respuestas
@@ -78,12 +79,13 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     private int nPreguntas = 0;//Cantidad de preguntas de ese nivel
     private int nPAacertadas = -1;//preguntas acertasdas si hay 3 preuntas y aciertas 3 pasas a la siguiente :D
     private int ActualLevel = 0;//Contador de niveles
-    private Random random = new Random();
+    private final Random random = new Random();
     private boolean dispara = false;
     private boolean creacion = true;
-    private Paint pincelTexto = new Paint();
-    private ThreadPoolExecutor poolMisiles = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-    private int CANTIDAD_MISILES=30;
+    private final Paint pincelTexto = new Paint();
+    private final ThreadPoolExecutor poolMisiles = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    private final ThreadPoolExecutor poolDisparo = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    private int CANTIDAD_MISILES=5;
 
     public EasyEngineV1(Context context) {
         super(context);
@@ -124,7 +126,10 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         nave.setAncho(220);
         nave.setRadioColision((220 + 220) / 4);
         nave.setActivo(true);
- 
+
+        bala.setAlto(228);
+        bala.setAncho(228);
+        bala.setPos(width - nave.getAncho(), height - nave.getAlto());
         y = height/ 2 - nave.getAlto();//- PLAYER_BMP.getHeight()
         touchY= y;
         nave.setPos(x,y);
@@ -159,6 +164,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
 
         surfaceReady = true;
         startDrawThread();
+        ((Juego)c).setTv_pregunta(currentQuestion.getPregunta());
         Log.d(LOGTAG, "Created");
     }
 
@@ -185,6 +191,9 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         if(nave.isActivo()){
             nave.DrawGraphic(c);
         }
+
+        bala.DrawGraphic(c);
+
         //Dibujar misiles
         for (int i = 0; i < misiles.size(); i++){
             GraphicObject misil = misiles.get(i);
@@ -205,8 +214,8 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
 
     public void Dispara() {
         System.out.println("DISPARA = "+misiles.size());
-        if (misiles.size() < CANTIDAD_MISILES) {
-            GraphicObject misil = new GraphicObject(this, R.drawable.misil1);
+        if (misiles.size() < CANTIDAD_MISILES && dispara) {
+            GraphicObject misil = new GraphicObject(EasyEngineV1.this, R.drawable.misil1);
             misil.setPos(nave.getPosX() + nave.getAncho() / 2 - misil.getAncho() / 2, nave.getPosY() + nave.getAlto() / 2 - misil.getAlto() / 2);
             misil.setAngulo(nave.getAngulo());
             misil.setIncX(Math.cos(Math.toRadians(misil.getAngulo())) * PASO_VELOCIDAD_MISIL);
@@ -214,8 +223,10 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
             misil.setActivo(true);
             misiles.add(misil);
             dispara = false;
-            poolMisiles.execute(new HebraMisiles());
         }
+
+        poolMisiles.execute(new HebraMisiles());
+
         //
     }
     public void tick(){
@@ -289,19 +300,15 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
             //asteroide.setPos(random.nextInt(width - asteroide.getAncho()), random.nextInt(height - asteroide.getAlto()));
             int rdpx = random.nextInt(width - asteroide.getAncho());
 
-            //Que los asteroides se generen dentro de la pantalla
-            if(rdpx < nave.getAncho()){
-                rdpx = nave.getAncho();
-            }
-            if(rdpx > width - asteroide.getAncho()){
-                rdpx = width - asteroide.getAncho();
-            }
+            //Que los asteroides se generen al final de la pantalla
+            rdpx = width - asteroide.getAncho();
 
             int rdpy = random.nextInt(height - asteroide.getAlto());
             if(rdpy < nave.getAlto()){
                 rdpy = nave.getAlto();
             }
-            if(rdpy > height -  nave.getAlto()){
+
+            if(rdpy > height -  nave.getAlto() || rdpy >= height ){
                 rdpy = height -  nave.getAlto();
             }
 //            if(rdpx > (x+100 + nave.getAncho())){
@@ -442,10 +449,34 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public boolean onTouchEvent(MotionEvent ev){
-        //Colision con la nave y los bordes superiores y inferiores y que la nave siga la misma posicion que el dedo
-        if (ev.getX() >= 0 && ev.getX() < (x + nave.getAncho() )) {
-            touchY = (int) ev.getY();
+
+
+        int action = ev.getActionMasked();
+        // Get the index of the pointer associated with the action.
+        int index = ev.getActionIndex();
+
+        float ejeX;
+        float ejeY;
+        if (ev.getPointerCount() > 1) {
+            //Multitouch event
+            ejeX = (int)ev.getX(index);
+            ejeY = (int)ev.getY(index);
+        }else{
+            //Single touch event
+            ejeX = (int)ev.getX(index);
+            ejeY = (int)ev.getY(index);
         }
+
+        //Colision con la nave y los bordes superiores y inferiores y que la nave siga la misma posicion que el dedo
+        if (ejeX >= 0 && ejeX < (x + nave.getAncho()) && MotionEvent.ACTION_MOVE == action) {
+            touchY = (int) ejeY;
+        }
+        //Disparo de misiles en la esquina inferior derecha de la pantalla
+        if (ejeX >= width - nave.getAncho() && ejeY >= height - nave.getAlto()) {
+            dispara=true;
+            poolDisparo.execute(new HebraDisparo());
+        }
+
         return true;
     }
 
@@ -659,6 +690,21 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
                     e.printStackTrace();
                 }
             }
+
         }
     }
+
+    private class HebraDisparo extends Thread{
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(500);
+                Dispara();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 }

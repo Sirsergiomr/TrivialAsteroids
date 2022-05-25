@@ -359,19 +359,12 @@ public class GraphicObject {
         return anchoSprite;
     }
 
-
-
-
-
     /**
      * @param anchoSprite the anchoSprite to set
      */
     public void setAnchoSprite(int anchoSprite) {
         this.anchoSprite = anchoSprite;
     }
-
-
-
 
 
     /**

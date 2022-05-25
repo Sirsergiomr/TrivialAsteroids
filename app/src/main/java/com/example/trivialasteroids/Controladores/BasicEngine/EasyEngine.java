@@ -42,6 +42,7 @@ import static java.lang.Thread.sleep;
  *
  * OLD ENGINE
  */
+@Deprecated
 public class EasyEngine extends SurfaceView {
     float alto, ancho, posX, posY, posAsteroideX = ancho, posAsteroideY = alto / 4;
     private static int PASO_VELOCIDAD_MISIL = 1;

@@ -39,20 +39,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_partida" />
 
-    <Button
-        android:id="@+id/acribillar"
-        android:layout_width="100dp"
-        android:layout_height="52dp"
-        android:layout_marginEnd="32dp"
-        android:text="SHOT"
-        app:cornerRadius="15dp"
-        app:icon="@drawable/misil1"
-        app:iconTint="@color/black"
-        android:enabled="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:rippleColor="#FFFFFF" />
-
     <ImageView
         android:id="@+id/vida1"
         android:layout_width="37dp"
@@ -145,6 +131,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:contentDescription=" "
         android:textColor="@color/black"
         app:icon="@android:drawable/ic_media_pause"
         app:iconTint="@color/black"
