@@ -9,6 +9,9 @@ import android.graphics.drawable.Drawable;
 import android.view.SurfaceView;
 import android.view.View;
 
+import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
+
+import java.util.Random;
 import java.util.function.BiPredicate;
 
 public class GraphicObject {
@@ -34,11 +37,14 @@ public class GraphicObject {
     private String respuestaAsociada;
     private boolean verdadero;
     //Donde dibujamos el gráfico (usada en view.ivalidate)
-    private View view;
+    private EasyEngineV1 view;
     // Para determinar el espacio a borrar (view.ivalidate)
     public static final int MAX_VELOCIDAD = 50;
+    Random rnd = new Random();
+    private boolean seguimiento=false;
 
-    public GraphicObject(View view, int drawableID ){
+
+    public GraphicObject(EasyEngineV1 view, int drawableID ){
         this.view = view;
         this.drawable = view.getResources().getDrawable(drawableID,null);
         ancho = drawable.getIntrinsicWidth();
@@ -58,7 +64,12 @@ public class GraphicObject {
     public void setRespuestaAsociada(String respuestaAsociada){
         this.respuestaAsociada = respuestaAsociada;
     }
-
+    public boolean seguirJugador(){
+        return seguimiento;
+    }
+    public void setSeguimiento(boolean seguimiento){
+        this.seguimiento = seguimiento;
+    }
     public String getRespuestaAsociada(){
         return respuestaAsociada;
     }
@@ -102,7 +113,10 @@ public class GraphicObject {
     public void incrementaPos(double factor){//
         posX+=incX * factor;
         // Si salimos de la pantalla, corregimos posición
-        if(posX<-ancho/2) {posX=view.getWidth()-ancho/2;}
+        if(posX<-ancho/2) {
+            posX=view.getWidth()-ancho/2;
+            if(seguimiento){posY= view.getNave().getPosY();}
+        }
         if(posX>view.getWidth()-ancho/2) {posX=-ancho/2;}
         posY+=incY * factor;
         if(posY<-alto/2)
@@ -290,7 +304,7 @@ public class GraphicObject {
     /**
      * @param view the view to set
      */
-    public void setView(View view) {
+    public void setView(EasyEngineV1 view) {
         this.view = view;
     }
 
