@@ -15,7 +15,11 @@ import java.util.Random;
 import java.util.function.BiPredicate;
 
 public class GraphicObject {
+    public final static int TIPO_MARCIANO = 0;
+    public final static int TIPO_ASTEROIDE = 1;
+    public final static int TIPO_NAVE = 2;
 
+    private int tipo;
     private Drawable drawable;   //Imagen que dibujaremos
     private double posX;
     private double posY;   //Posición
@@ -36,6 +40,9 @@ public class GraphicObject {
     private boolean activo=false;
     private String respuestaAsociada;
     private boolean verdadero;
+    private OnFinishListener onFinishListener;
+
+
     //Donde dibujamos el gráfico (usada en view.ivalidate)
     private EasyEngineV1 view;
     // Para determinar el espacio a borrar (view.ivalidate)
@@ -110,12 +117,20 @@ public class GraphicObject {
         //Log.i("posicion","x:"+x+" y:"+y+" angulo:"+angulo);
     }
 
+
+
     public void incrementaPos(double factor){//
         posX+=incX * factor;
         // Si salimos de la pantalla, corregimos posición
         if(posX<-ancho/2) {
             posX=view.getWidth()-ancho/2;
             if(seguimiento){posY= view.getNave().getPosY();}
+            //TODO ELEMINAR MARCIANO QUE LLEGUE
+            try {
+                onFinishListener.onFinish();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         if(posX>view.getWidth()-ancho/2) {posX=-ancho/2;}
         posY+=incY * factor;
@@ -201,6 +216,12 @@ public class GraphicObject {
      */
     public double getIncX() {
         return incX;
+    }
+
+
+    public void setTipo(int tipo, OnFinishListener onFinishListener) {
+        this.tipo = tipo;
+        this.onFinishListener = onFinishListener;
     }
 
     /**
@@ -413,5 +434,7 @@ public class GraphicObject {
         this.iPasoanimacion = iPasoanimacion;
     }
 
-
+    public interface OnFinishListener {
+        void onFinish();
+    }
 }

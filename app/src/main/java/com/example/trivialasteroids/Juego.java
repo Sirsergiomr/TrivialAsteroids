@@ -2,11 +2,8 @@ package com.example.trivialasteroids;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.database.AbstractCursor;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -18,18 +15,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine;
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-import com.example.trivialasteroids.Controladores.BasicEngine.Functions;
 import com.example.trivialasteroids.Modelos.Pregunta;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Juego extends AppCompatActivity {
 //    EasyEngine myGameView;
@@ -64,19 +55,15 @@ public class Juego extends AppCompatActivity {
         iv_win = findViewById(R.id.iv_win);
         bt_come_back = findViewById(R.id.bt_come_back);
 
-//        acribillar.setOnClickListener(view -> {
-//            ndisparos++;
-//            System.out.println("DISPARA DESDE UI = "+ ndisparos);
-//            rocket.Dispara();
-//        });
-//        tryAgain.setOnClickListener(view -> {
-//            //TODO Volver a 0 todos los valores.
-//            reinicia();
-//        });
+        tryAgain.setOnClickListener(view -> {
+            //TODO Volver a 0 todos los valores.
+            reinicia();
+        });
+
         bt_pause.setOnClickListener(view -> {
             ndisparos++;
             System.out.println("DISPARA DESDE UI = "+ ndisparos);
-            rocket.Dispara();
+            rocket.dispara();
         });
         bt_come_back.setOnClickListener(view -> {
 //            Functions.Destroy(myGameView.getGameLoopThread());
@@ -164,6 +151,7 @@ public class Juego extends AppCompatActivity {
     }
 
     public void activaGameOver() {
+        rocket.stopDrawThread();
         gameover=true;
         win = false;
         gameOver.setVisibility(View.VISIBLE);
@@ -177,7 +165,7 @@ public class Juego extends AppCompatActivity {
         gameover=false;
         win = false;
         pause=false;
-        acribillar.setEnabled(true);
+//        acribillar.setEnabled(true);
         bt_pause.setVisibility(View.VISIBLE);
         tryAgain.setVisibility(View.GONE);
         gameOver.setVisibility(View.GONE);
@@ -185,10 +173,11 @@ public class Juego extends AppCompatActivity {
         vida1.setVisibility(View.VISIBLE);
         vida2.setVisibility(View.VISIBLE);
         tv_pause.setVisibility(View.GONE);
+        rocket.reinicio();
 //        myGameView.reinicia();
     }
     boolean finalLv = false;
-    public void NextLevel( int ActualLevel, ArrayList<JSONObject> niveles){
+    public void nextLevel(int ActualLevel, ArrayList<JSONObject> niveles){
         if(niveles.size()-1 == ActualLevel){
             finalLv = true;
         }else{
@@ -202,7 +191,7 @@ public class Juego extends AppCompatActivity {
     }
 
 
-    public void RebootBasicVariables(){
+    public void rebootBasicVariables(){
         rocket.setNAciertos(0);
         rocket.setXAciertos(0);
         rocket.setNErrores(0);
@@ -211,21 +200,21 @@ public class Juego extends AppCompatActivity {
     int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
 
     public void compruebaPartida(int nAciertos, int nErrores, int xAciertos,
-                                 int yErrores, int nPreguntas, int nPAcertadas,
+                                 int maxErrores, int nPreguntas, int nPAcertadas,
                                  ArrayList<Pregunta> preguntas,
                                  ArrayList<JSONObject> niveles, int ActualLevel){
         if(animator!= null){
             animator.end();
         }
         tv_partida.setVisibility(View.VISIBLE);
-        tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+yErrores);
+        tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+maxErrores);
         System.out.println("NPREGUNTAS ACERTDAS = "+nPAcertadas);
 
         if(nAciertos == xAciertos){
             if(nPreguntas == nPAcertadas && gameover == false && nPAcertadas!=0){
                 //TODO CAMBIO DE NIVEL, POR AHORA ES WIN
-                RebootBasicVariables();
-                NextLevel(ActualLevel, niveles);
+                rebootBasicVariables();
+                nextLevel(ActualLevel, niveles);
                 if(finalLv){
                     activaWin();
                 }
@@ -235,7 +224,7 @@ public class Juego extends AppCompatActivity {
                 System.out.println("NPREGUNTAS ACERTDAS = "+siguiente_pregunta);
 
                 if(siguiente_pregunta <= preguntas.size()){
-                    RebootBasicVariables();
+                    rebootBasicVariables();
                     tv_pregunta.setText(preguntas.get(siguiente_pregunta - 1).getPregunta());
                     rocket.setCurrentQuestion(preguntas.get(siguiente_pregunta - 1));
                     rocket.setNPAcertadas(siguiente_pregunta);
@@ -247,10 +236,9 @@ public class Juego extends AppCompatActivity {
         }
 
         //Y si las fallas todas en la mima pregunta game over y se reinicia al primer lv
-        if(nErrores == yErrores && win== false && nErrores!=0){
+        if(nErrores == maxErrores && !win && nErrores!=0){
             activaGameOver();
         }
-        //TODO Comprobar la cantidad de preguntas respondidas por nivel
     }
 
 
