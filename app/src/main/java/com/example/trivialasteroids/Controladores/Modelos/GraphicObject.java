@@ -43,7 +43,6 @@ public class GraphicObject {
     private EasyEngineV1 view;
     // Para determinar el espacio a borrar (view.ivalidate)
     public static final int MAX_VELOCIDAD = 50;
-    Random rnd = new Random();
     private boolean seguimiento=false;
 
 
@@ -331,23 +330,13 @@ public class GraphicObject {
         return MAX_VELOCIDAD;
     }
 
-
-
-
     public Bitmap getAnimacion() {
         return animacion;
     }
 
-
-
-
     public void setAnimacion(Bitmap animacion) {
         this.animacion = animacion;
     }
-
-
-
-
 
     /**
      * @return the frame
@@ -355,10 +344,6 @@ public class GraphicObject {
     public int getFrame() {
         return frame;
     }
-
-
-
-
 
     /**
      * @param frame the frame to set
@@ -396,17 +381,12 @@ public class GraphicObject {
         this.anchoSprite = anchoSprite;
     }
 
-
     /**
      * @return the altoSprite
      */
     public int getAltoSprite() {
         return altoSprite;
     }
-
-
-
-
 
     /**
      * @param altoSprite the altoSprite to set

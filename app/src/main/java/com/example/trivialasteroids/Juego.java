@@ -263,6 +263,7 @@ public class Juego extends AppCompatActivity {
         iv_win.setVisibility(View.VISIBLE);
         bt_come_back.setVisibility(View.VISIBLE);
         rocket.getNave().setActivo(false);
+        rocket.clearMisiles();
     }
 
     public void setTv_pregunta (String pregunta){
