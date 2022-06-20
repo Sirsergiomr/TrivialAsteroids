@@ -1,4 +1,4 @@
-package com.example.trivialasteroids.Modelos;
+package com.example.trivialasteroids.Controladores.Modelos;
 
 import java.io.Serializable;
 

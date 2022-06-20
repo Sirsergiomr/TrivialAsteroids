@@ -16,32 +16,28 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-import com.example.trivialasteroids.Modelos.Pregunta;
+import com.example.trivialasteroids.Controladores.Modelos.Pregunta;
 
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 public class Juego extends AppCompatActivity {
-//    EasyEngine myGameView;
-    EasyEngineV1 rocket;
-    Button acribillar, tryAgain, bt_pause, bt_come_back;
-    int vidasExtras = 3;
-    ImageView vida1, vida2, gameOver, iv_win;
-    boolean pause=false, win =false, gameover=false;
-    TextView tv_pause;
-    TextView tv_partida;
-    TextView tv_pregunta;
-    TextView tv_level;
-    ObjectAnimator animator = null;
-    int ndisparos=0;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        setContentView(R.layout.activity_main);
-//        acribillar = findViewById(R.id.acribillar);
+    private EasyEngineV1 rocket;
+    private Button acribillar, tryAgain, bt_pause, bt_come_back;
+    private int vidasExtras = 3;
+    private ImageView vida1, vida2, gameOver, iv_win;
+    private boolean pause=false, win =false, gameover=false;
+    private TextView tv_pause;
+    private TextView tv_partida;
+    private TextView tv_pregunta;
+    private TextView tv_level;
+    private ObjectAnimator animator = null;
+    private int ndisparos=0;
+    private int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
+    private boolean finalLv = false;//Indica si estas en el último nivel o no;
+
+    public void initUi(){
         vida1 = findViewById(R.id.vida1);
         vida2 = findViewById(R.id.vida2);
         gameOver = findViewById(R.id.game_over);
@@ -51,26 +47,38 @@ public class Juego extends AppCompatActivity {
         tv_pause = findViewById(R.id.tv_pause);
         tv_pregunta = findViewById(R.id.tv_pregunta);
         tv_level = findViewById(R.id.tv_level);
-        rocket = findViewById(R.id.surfaceSpaceShip);
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setContentView(R.layout.activity_main);
+
+        initUi();
+
+        try {
+            rocket = findViewById(R.id.surfaceSpaceShip);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
         iv_win = findViewById(R.id.iv_win);
         bt_come_back = findViewById(R.id.bt_come_back);
 
         tryAgain.setOnClickListener(view -> {
-            //TODO Volver a 0 todos los valores.
             reinicia();
         });
 
         bt_pause.setOnClickListener(view -> {
             ndisparos++;
-            System.out.println("DISPARA DESDE UI = "+ ndisparos);
+            System.out.println("DISPARA DESDE UI, DISPAROS TOTALES = "+ ndisparos);
             rocket.dispara();
         });
+
         bt_come_back.setOnClickListener(view -> {
-//            Functions.Destroy(myGameView.getGameLoopThread());
             onBackPressed();
         });
     }
-
 
     public void setPause(){
         if(!pause){
@@ -91,8 +99,6 @@ public class Juego extends AppCompatActivity {
         Log.i("Estado","juegos.onRestart");
         super.onRestart();
     }
-
-
     @Override
     protected void onResume() {
         Log.i("Estado","juegos.onResume");
@@ -102,7 +108,6 @@ public class Juego extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        myGameView.getGameLoopThread().pausar();
     }
     @Override
     protected void onDestroy() {
@@ -114,6 +119,10 @@ public class Juego extends AppCompatActivity {
         if (hasFocus) {
             hideSystemUI();
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     private void hideSystemUI() {
@@ -176,28 +185,27 @@ public class Juego extends AppCompatActivity {
         rocket.reinicio();
 //        myGameView.reinicia();
     }
-    boolean finalLv = false;
+
     public void nextLevel(int ActualLevel, ArrayList<JSONObject> niveles){
-        if(niveles.size()-1 == ActualLevel){
+
+        System.out.println("NIVEL ACTUAL = "+ActualLevel);
+        System.out.println("NIVEL TOTAL = "+(niveles.size()-1));
+        if(niveles.size()-1 == ActualLevel){//size = 2; 2-1 == 0 no, 2-1 = 1 si final true
             finalLv = true;
         }else{
-            ++ActualLevel;
+            ++ActualLevel;//0 - > 1
             tv_level.setText("LV "+ActualLevel);
 
             animationLevel();
 
-            rocket.setLevel(niveles.get(ActualLevel), ActualLevel);
+            rocket.setLevel(niveles.get(ActualLevel), ActualLevel);// niveles.get(1), 1
         }
     }
 
-
     public void rebootBasicVariables(){
         rocket.setNAciertos(0);
-        rocket.setXAciertos(0);
         rocket.setNErrores(0);
-        rocket.setYErrores(0);
     }
-    int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
 
     public void compruebaPartida(int nAciertos, int nErrores, int xAciertos,
                                  int maxErrores, int nPreguntas, int nPAcertadas,
@@ -208,20 +216,22 @@ public class Juego extends AppCompatActivity {
         }
         tv_partida.setVisibility(View.VISIBLE);
         tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+maxErrores);
-        System.out.println("NPREGUNTAS ACERTDAS = "+nPAcertadas);
+        System.out.println("NPREGUNTAS ACERTADAS = "+nPAcertadas);
 
-        if(nAciertos == xAciertos){
+        if(nAciertos == xAciertos){//10 == 10 a
+            System.out.println("NPREGUNTAS ACERTADAS = "+nPAcertadas + "NPREGUNTAS = "+nPreguntas+" NIVEL = "+ActualLevel+" NIVEL TOTAL = "+(niveles.size()-1));
             if(nPreguntas == nPAcertadas && gameover == false && nPAcertadas!=0){
-                //TODO CAMBIO DE NIVEL, POR AHORA ES WIN
                 rebootBasicVariables();
+                //Se realiza el cambio de nivel y se activa win
                 nextLevel(ActualLevel, niveles);
                 if(finalLv){
                     activaWin();
                 }
             }
+
             try {
                 ++siguiente_pregunta;
-                System.out.println("NPREGUNTAS ACERTDAS = "+siguiente_pregunta);
+                System.out.println("NPREGUNTA ACTUAL = "+siguiente_pregunta);
 
                 if(siguiente_pregunta <= preguntas.size()){
                     rebootBasicVariables();
@@ -239,14 +249,16 @@ public class Juego extends AppCompatActivity {
         if(nErrores == maxErrores && !win && nErrores!=0){
             activaGameOver();
         }
-    }
 
+        //Variables info
+        System.out.println("");
+    }
 
     private void activaWin() {
         win= true;
         gameover = false;
         tv_partida.setVisibility(View.VISIBLE);
-        acribillar.setEnabled(false);
+//        acribillar.setEnabled(false);
         bt_pause.setVisibility(View.GONE);
         iv_win.setVisibility(View.VISIBLE);
         bt_come_back.setVisibility(View.VISIBLE);
@@ -261,12 +273,6 @@ public class Juego extends AppCompatActivity {
         tv_level.setText(level);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-//        myGameView.getGameLoopThread().reanudar();
-//        Functions.Destroy(myGameView.getGameLoopThread());
-    }
     public void animationLevel(){
         // adding the color to be shown
         animator = ObjectAnimator.ofInt(tv_level, "textColor", Color.BLUE, Color.RED, Color.GREEN);

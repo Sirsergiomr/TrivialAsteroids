@@ -2,34 +2,26 @@ package com.example.trivialasteroids.Controladores.BasicEngine;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.os.Parcelable;
-import android.provider.CalendarContract;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import com.example.trivialasteroids.Juego;
-import com.example.trivialasteroids.MainActivity;
-import com.example.trivialasteroids.Modelos.GraphicObject;
-import com.example.trivialasteroids.Modelos.Pregunta;
-import com.example.trivialasteroids.Modelos.Respuesta;
-import com.example.trivialasteroids.R;
+import com.example.trivialasteroids.Controladores.Modelos.GraphicObject;
+import com.example.trivialasteroids.Controladores.Modelos.Pregunta;
+import com.example.trivialasteroids.Controladores.Modelos.Respuesta;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.Executors;

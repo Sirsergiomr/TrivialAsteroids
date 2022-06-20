@@ -1,18 +1,14 @@
-package com.example.trivialasteroids.Modelos;
+package com.example.trivialasteroids.Controladores.Modelos;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.view.SurfaceView;
 import android.view.View;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
 
 import java.util.Random;
-import java.util.function.BiPredicate;
 
 public class GraphicObject {
     public final static int TIPO_MARCIANO = 0;
@@ -125,7 +121,6 @@ public class GraphicObject {
         if(posX<-ancho/2) {
             posX=view.getWidth()-ancho/2;
             if(seguimiento){posY= view.getNave().getPosY();}
-            //TODO ELEMINAR MARCIANO QUE LLEGUE
             try {
                 onFinishListener.onFinish();
             } catch (Exception e) {
