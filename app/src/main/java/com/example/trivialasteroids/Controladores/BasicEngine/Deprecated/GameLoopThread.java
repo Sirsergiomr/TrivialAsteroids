@@ -1,14 +1,10 @@
-package com.example.trivialasteroids.Controladores.BasicEngine;
-
-import android.annotation.SuppressLint;
-import android.graphics.Canvas;
-import android.util.Log;
+package com.example.trivialasteroids.Controladores.BasicEngine.Deprecated;
 
 /**
  * @author Sirse
  * Este hilo es el que refresca la view del juego mientras running = TRUE
  */
-
+@Deprecated
 public class GameLoopThread extends Thread {
     private final EasyEngine view;
     private boolean running = false;

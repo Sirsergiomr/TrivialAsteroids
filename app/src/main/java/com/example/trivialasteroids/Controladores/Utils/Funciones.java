@@ -1,6 +1,6 @@
 package com.example.trivialasteroids.Controladores.Utils;
 
-import com.example.trivialasteroids.Entidades.GraphicObject;
+import com.example.trivialasteroids.Controladores.Entidades.GraphicObject;
 
 import java.util.List;
 

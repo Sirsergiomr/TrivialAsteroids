@@ -1,10 +1,9 @@
-package com.example.trivialasteroids.Entidades;
+package com.example.trivialasteroids.Controladores.Entidades;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.view.View;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
 

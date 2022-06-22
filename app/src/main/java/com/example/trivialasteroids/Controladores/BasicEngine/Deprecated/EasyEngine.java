@@ -1,4 +1,4 @@
-package com.example.trivialasteroids.Controladores.BasicEngine;
+package com.example.trivialasteroids.Controladores.BasicEngine.Deprecated;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -14,7 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.trivialasteroids.Juego;
-import com.example.trivialasteroids.Entidades.GraphicObject;
+import com.example.trivialasteroids.Controladores.Entidades.GraphicObject;
 import com.example.trivialasteroids.Controladores.Modelos.Pregunta;
 import com.example.trivialasteroids.Controladores.Modelos.Respuesta;
 

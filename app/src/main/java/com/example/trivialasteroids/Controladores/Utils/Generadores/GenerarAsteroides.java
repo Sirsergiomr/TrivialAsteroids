@@ -1,9 +1,9 @@
 package com.example.trivialasteroids.Controladores.Utils.Generadores;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-import com.example.trivialasteroids.Entidades.GraphicObject;
+import com.example.trivialasteroids.Controladores.Entidades.GraphicObject;
 import com.example.trivialasteroids.Controladores.Utils.Funciones;
-import com.example.trivialasteroids.Entidades.Asteroide;
+import com.example.trivialasteroids.Controladores.Entidades.Asteroide;
 import com.example.trivialasteroids.R;
 import java.util.List;
 

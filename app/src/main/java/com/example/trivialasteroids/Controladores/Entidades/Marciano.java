@@ -1,7 +1,11 @@
-package com.example.trivialasteroids.Entidades;
+package com.example.trivialasteroids.Controladores.Entidades;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-
+/**
+ * @author sirse
+ *
+ *
+ * */
 public class Marciano extends GraphicObject {
 
     private int height;

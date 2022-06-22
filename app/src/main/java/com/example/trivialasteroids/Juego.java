@@ -70,9 +70,7 @@ public class Juego extends AppCompatActivity {
         });
 
         bt_pause.setOnClickListener(view -> {
-            ndisparos++;
-            System.out.println("DISPARA DESDE UI, DISPAROS TOTALES = "+ ndisparos);
-            rocket.dispara();
+            //DO NOTHING
         });
 
         bt_come_back.setOnClickListener(view -> {
