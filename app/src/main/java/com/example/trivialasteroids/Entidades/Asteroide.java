@@ -1,9 +1,6 @@
 package com.example.trivialasteroids.Entidades;
 
-import android.view.SurfaceView;
-
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-import com.example.trivialasteroids.Controladores.Modelos.GraphicObject;
 
 public class Asteroide extends GraphicObject {
 
@@ -15,8 +12,8 @@ public class Asteroide extends GraphicObject {
     public Asteroide(EasyEngineV1 view, int drawableID, int height, int defaultShipHeight, int VELOCIDAD_ASTEROIDE) {
         super(view, drawableID);
         this.height = height;
-        this.defaultShipHeight = defaultShipHeight;
         this.VELOCIDAD_ASTEROIDE=VELOCIDAD_ASTEROIDE;
+        this.defaultShipHeight = defaultShipHeight;
     }
     public void movimientoAsteroide(){
         if (this.isActivo()) {
@@ -46,4 +43,5 @@ public class Asteroide extends GraphicObject {
     public void setOnColisionListener(OnColisionListener onColisionListener) {
         this.onColisionListener = onColisionListener;
     }
+
 }

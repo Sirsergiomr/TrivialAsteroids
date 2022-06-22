@@ -1,13 +1,12 @@
 package com.example.trivialasteroids.Entidades;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-import com.example.trivialasteroids.Controladores.Modelos.GraphicObject;
 
 public class Marciano extends GraphicObject {
 
-    private int defaultHeightShip;
     private int height;
     private int VELOCIDAD_MARCIANO;
+    private int defaultHeightShip;
     private OnColisionListener onColisionListener;
 
     public Marciano(EasyEngineV1 view, int drawableID, int height, int VELOCIDAD_MARCIANO, int defaultHeightShip) {
@@ -37,6 +36,9 @@ public class Marciano extends GraphicObject {
             }
         }
     }
+    public interface OnColisionListener{
+        void colision();
+    }
 
     public OnColisionListener getOnColisionListener() {
         return onColisionListener;
@@ -52,9 +54,5 @@ public class Marciano extends GraphicObject {
 
     public void setVELOCIDAD_MARCIANO(int VELOCIDAD_MARCIANO) {
         this.VELOCIDAD_MARCIANO = VELOCIDAD_MARCIANO;
-    }
-
-    public interface OnColisionListener{
-        void colision();
     }
 }

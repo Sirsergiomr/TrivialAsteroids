@@ -14,7 +14,7 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.example.trivialasteroids.Juego;
-import com.example.trivialasteroids.Controladores.Modelos.GraphicObject;
+import com.example.trivialasteroids.Entidades.GraphicObject;
 import com.example.trivialasteroids.Controladores.Modelos.Pregunta;
 import com.example.trivialasteroids.Controladores.Modelos.Respuesta;
 

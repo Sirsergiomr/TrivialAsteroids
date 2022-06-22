@@ -1,7 +1,7 @@
 package com.example.trivialasteroids.Controladores.Utils.Generadores;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-import com.example.trivialasteroids.Controladores.Modelos.GraphicObject;
+import com.example.trivialasteroids.Entidades.GraphicObject;
 import com.example.trivialasteroids.Controladores.Modelos.Respuesta;
 import com.example.trivialasteroids.Controladores.Utils.Funciones;
 import com.example.trivialasteroids.Entidades.Marciano;

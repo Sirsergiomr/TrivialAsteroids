@@ -1,7 +1,7 @@
 package com.example.trivialasteroids.Controladores.Utils.Generadores;
 
 import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
-import com.example.trivialasteroids.Controladores.Modelos.GraphicObject;
+import com.example.trivialasteroids.Entidades.GraphicObject;
 import com.example.trivialasteroids.Controladores.Utils.Funciones;
 import com.example.trivialasteroids.Entidades.Asteroide;
 import com.example.trivialasteroids.R;
@@ -11,9 +11,9 @@ import java.util.List;
 public class GenerarAsteroides extends Thread{
     private int VELOCIDAD_ASTEROIDE;
     private EasyEngineV1 context;
-    private int nAsteroids = 5;//Cantidad de enemigos
+    private int nAsteroids;//Cantidad de enemigos
     private int width, height, defaultShipHeight;
-    private double PASO_VELOCIDAD_ASTEROIDE;
+    private double PASO_VELOCIDAD;
     private int nAsteroidesSeguiendo;
     private  List<GraphicObject> asteroides;
 
@@ -26,7 +26,7 @@ public class GenerarAsteroides extends Thread{
         this.width = width;
         this.height = height;
         this.defaultShipHeight = defaultShipHeight;
-        this.PASO_VELOCIDAD_ASTEROIDE = PASO_VELOCIDAD_ASTEROIDE;
+        this.PASO_VELOCIDAD = PASO_VELOCIDAD_ASTEROIDE;
         this.nAsteroidesSeguiendo = nAsteroidesSeguiendo;
         this.asteroides = asteroides;
     }
@@ -49,18 +49,25 @@ public class GenerarAsteroides extends Thread{
             int posX = width;
             int posY = (int) (Math.random() * (height - asteroide.getAlto()));
 
-            asteroide.setIncX(-PASO_VELOCIDAD_ASTEROIDE);
+            asteroide.setIncX(-PASO_VELOCIDAD);
 
             asteroide.setPos(posX + asteroide.getIncX(), posY);
 
             asteroide.setActivo(true);
-
-            asteroides.add(asteroide);
-
-            if (nAsteroidesSeguiendo < 2) {
+            if (nAsteroidesSeguiendo < 2) {//0, 1 , 2
                 nAsteroidesSeguiendo++;
                 asteroide.setSeguimiento(true);
+
+                System.out.println("nAsteroidesSeguiendo = "+nAsteroidesSeguiendo);
             }
+            asteroides.add(asteroide);
         }
+    }
+    public int getnAsteroidesSeguiendo() {
+        return nAsteroidesSeguiendo;
+    }
+
+    public void setnAsteroidesSeguiendo(int nAsteroidesSeguiendo) {
+        this.nAsteroidesSeguiendo = nAsteroidesSeguiendo;
     }
 }

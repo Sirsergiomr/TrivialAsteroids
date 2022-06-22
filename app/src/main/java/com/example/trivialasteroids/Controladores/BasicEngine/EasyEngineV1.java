@@ -19,13 +19,14 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
-import com.example.trivialasteroids.Controladores.Utils.Funciones;
 import com.example.trivialasteroids.Controladores.Utils.Generadores.GenerarAsteroides;
 import com.example.trivialasteroids.Controladores.Utils.Generadores.GenerarMarcianos;
+import com.example.trivialasteroids.Controladores.Utils.Generadores.GenerarMisiles;
 import com.example.trivialasteroids.Entidades.Asteroide;
 import com.example.trivialasteroids.Entidades.Marciano;
+import com.example.trivialasteroids.Entidades.Misil;
 import com.example.trivialasteroids.Juego;
-import com.example.trivialasteroids.Controladores.Modelos.GraphicObject;
+import com.example.trivialasteroids.Entidades.GraphicObject;
 import com.example.trivialasteroids.Controladores.Modelos.Pregunta;
 import com.example.trivialasteroids.Controladores.Modelos.Respuesta;
 import com.example.trivialasteroids.R;
@@ -49,7 +50,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 
 public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback, Runnable {
-    private static final double PASO_VELOCIDAD_ASTEROIDE = 0.5;
+    private static final double PASO_VELOCIDAD = 0.5;
     private Context c;
     private SurfaceHolder holder;
     private Thread drawThread;
@@ -85,7 +86,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     private int VELOCIDAD_MARCIANO = 5;
 
     private final int nAsteroids = 5;//Cantidad de enemigos
-    private final int nMarcianos = 5;//Cantidad de enemigos
+    private final int nMarcianos = 0;//Cantidad de enemigos
     private int CANTIDAD_MISILES = 5;
     // Datos en relacion con las respuestas
     private int xAciertos = 10;//Cantidad de aciertos que se le otorga al usuario
@@ -102,8 +103,8 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     private final Paint pincelRectAst = new Paint();
     private final Paint pincelRectMar = new Paint();
 
-    private final ThreadPoolExecutor poolMisiles = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
     private final ThreadPoolExecutor poolMarcianos = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+    private final ThreadPoolExecutor poolMisiles = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
     private final ThreadPoolExecutor poolAsteroides = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
     private final ThreadPoolExecutor poolDisparo = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
@@ -218,6 +219,8 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     public void dispara() {
+//        poolDisparo.execute(new GenerarMisiles( nMarcianosSeguiendo,  nAsteroidesSeguiendo,  VELOCIDAD_MISIL,  width,
+//                nAciertos,  nErrores,  CANTIDAD_MISILES,  this, nave,  dispara,  PASO_VELOCIDAD_MISIL, misiles, marcianos, asteroides));
         System.out.println("CANTIDAD DE MISILES ACTUAL = " + misiles.size());
         if (misiles.size() < CANTIDAD_MISILES && dispara) {
             GraphicObject misil = new GraphicObject(EasyEngineV1.this, R.drawable.misil1);
@@ -229,9 +232,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
             misiles.add(misil);
             dispara = false;
         }
-
-        poolMisiles.execute(new HebraMisiles());
-        //
+        poolDisparo.execute(new HebraMisiles());
     }
 
     //Renderizado del juego
@@ -277,17 +278,18 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
             }
         }
 
+
+
         poolAsteroides.execute(new GenerarAsteroides(VELOCIDAD_ASTEROIDE,
                 this, nAsteroids, width, height, nave.getAlto(),
-                PASO_VELOCIDAD_ASTEROIDE, nAsteroidesSeguiendo, asteroides));
+                PASO_VELOCIDAD, nAsteroidesSeguiendo, asteroides));
 
         poolMarcianos.execute(new GenerarMarcianos(nMarcianos,this, height, width, nave.getAlto(),
-                VELOCIDAD_MARCIANO, nMarcianosSeguiendo, PASO_VELOCIDAD_ASTEROIDE, nave, respuestas, marcianos));
+                VELOCIDAD_MARCIANO, nMarcianosSeguiendo, PASO_VELOCIDAD, nave, respuestas, marcianos));
 
         //Movimiento de los asteroides de izquierda a derecha y colision con la nave
         for (int i = 0; i < asteroides.size(); i++) {
             Asteroide asteroide = (Asteroide) asteroides.get(i);
-            asteroide.movimientoAsteroide();
             asteroide.setOnColisionListener(new Asteroide.OnColisionListener() {
                 @Override
                 public void colision() {
@@ -295,11 +297,13 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
                         //Se le quita vida
                         System.out.println("LA NAVE MUERE");
                         if (asteroide.seguirJugador()) {
-                            nAsteroidesSeguiendo--;
+//                            nAsteroidesSeguiendo--;
                         }
                     }
                 }
             });
+            asteroide.movimientoAsteroide();
+
         }
 
         //Movimiento de los marcianos de izquierda a derecha y colision con la nave
@@ -320,6 +324,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
                 }
             });
             marciano.movimientoMarciano();
+
         }
     }
 
@@ -403,7 +408,11 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         //Disparo de misiles en la esquina inferior derecha de la pantalla
         if (ejeX >= width - nave.getAncho() && ejeY >= height - nave.getAlto()) {
             dispara = true;
-            poolDisparo.execute(new HebraDisparo());
+//            poolDisparo.execute(new GenerarMisiles( nMarcianosSeguiendo,  nAsteroidesSeguiendo,
+//                    VELOCIDAD_MISIL,  width, nAciertos,  nErrores,
+//                    CANTIDAD_MISILES,  this, nave,  dispara,
+//                    PASO_VELOCIDAD_MISIL, misiles, marcianos, asteroides));
+            poolMisiles.execute(new HebraDisparo());
         }
 
         return true;
@@ -516,7 +525,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     //-------------------------------------------
 
     //Control de partida
-    private void anotarPuntos(int nAcertadas, int nErrores) {
+    public void anotarPuntos(int nAcertadas, int nErrores) {
         if (c instanceof Juego) {
             ((Juego) c).runOnUiThread(new Runnable() {
                 @Override
@@ -559,14 +568,60 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         currentLevel = jsonObject;
         preguntas();
         respuestas();
+    }
+    public int getnAsteroidesSeguiendo() {
+        return nAsteroidesSeguiendo;
+    }
 
+    public void setnAsteroidesSeguiendo(int nAsteroidesSeguiendo) {
+        this.nAsteroidesSeguiendo = nAsteroidesSeguiendo;
+
+    }
+
+    public int getnMarcianosSeguiendo() {
+        return nMarcianosSeguiendo;
+    }
+
+    public void setnMarcianosSeguiendo(int nMarcianosSeguiendo) {
+        this.nMarcianosSeguiendo = nMarcianosSeguiendo;
     }
 
     public void clearMisiles() {
         misiles.clear();
     }
 
-    //Hebras
+
+    //Reinicio del juego
+    public void reinicio() {
+        nAciertos = 0;
+        nErrores = 0;
+        nPAacertadas = 0;
+        nPreguntas = 0;
+        misiles.clear();
+        marcianos.clear();
+        asteroides.clear();
+        nave.setActivo(true);
+        nAsteroidesSeguiendo = 0;
+        nMarcianosSeguiendo = 0;
+        startDrawThread();
+    }
+
+    public void setdispara(boolean dispara) {
+        this.dispara = dispara;
+    }
+
+    private class HebraDisparo extends Thread {
+        @Override
+        public void run() {
+            try {
+                Thread.sleep(500);
+                dispara();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
     private class HebraMisiles extends Thread {
         @Override
         public void run() {
@@ -582,7 +637,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
                     } else {
                         //Eliminar el asteroide
                         for (int j = 0; j < asteroides.size(); j++) {
-                            GraphicObject asteroide = asteroides.get(j);
+                            Asteroide asteroide = (Asteroide) asteroides.get(j);
                             if (compruebaColision(misil, asteroide, misiles, asteroides)) {
                                 if (asteroide.seguirJugador()) {
                                     nAsteroidesSeguiendo--;
@@ -621,31 +676,6 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
-    private class HebraDisparo extends Thread {
-        @Override
-        public void run() {
-            try {
-                Thread.sleep(500);
-                dispara();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    //Reinicio del juego
-    public void reinicio() {
-        nAciertos = 0;
-        nErrores = 0;
-        nPAacertadas = 0;
-        nPreguntas = 0;
-        misiles.clear();
-        marcianos.clear();
-        asteroides.clear();
-        nave.setActivo(true);
-        nAsteroidesSeguiendo = 0;
-        nMarcianosSeguiendo = 0;
-        startDrawThread();
-    }
 }
+
+
