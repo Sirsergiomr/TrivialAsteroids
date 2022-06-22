@@ -8,6 +8,9 @@ import com.example.trivialasteroids.Entidades.Misil;
 
 import java.util.List;
 
+/***
+ * Tener en cuenta que no se está utilizando nada de esto, todavía estan en el apartado Hebras de EasyEnginev1
+ */
 public class ControlDisparo extends Thread {
     private List<GraphicObject> misiles;
     private List<GraphicObject> asteroides;

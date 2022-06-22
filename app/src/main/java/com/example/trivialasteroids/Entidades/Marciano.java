@@ -7,7 +7,6 @@ public class Marciano extends GraphicObject {
     private int height;
     private int VELOCIDAD_MARCIANO;
     private int defaultHeightShip;
-    private OnColisionListener onColisionListener;
 
     public Marciano(EasyEngineV1 view, int drawableID, int height, int VELOCIDAD_MARCIANO, int defaultHeightShip) {
         super(view, drawableID);
@@ -29,23 +28,8 @@ public class Marciano extends GraphicObject {
             if (this.getPosY() <= defaultHeightShip / 2) {
                 this.setPosY((int) (this.getPosY() + this.getAlto()));
             }
-            try {
-                onColisionListener.colision();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+
         }
-    }
-    public interface OnColisionListener{
-        void colision();
-    }
-
-    public OnColisionListener getOnColisionListener() {
-        return onColisionListener;
-    }
-
-    public void setOnColisionListener(OnColisionListener onColisionListener) {
-        this.onColisionListener = onColisionListener;
     }
 
     public int getVELOCIDAD_MARCIANO() {

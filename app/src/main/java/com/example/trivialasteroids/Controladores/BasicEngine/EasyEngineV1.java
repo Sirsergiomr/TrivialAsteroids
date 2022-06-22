@@ -86,7 +86,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     private int VELOCIDAD_MARCIANO = 5;
 
     private final int nAsteroids = 5;//Cantidad de enemigos
-    private final int nMarcianos = 0;//Cantidad de enemigos
+    private final int nMarcianos = 5;//Cantidad de enemigos
     private int CANTIDAD_MISILES = 5;
     // Datos en relacion con las respuestas
     private int xAciertos = 10;//Cantidad de aciertos que se le otorga al usuario
@@ -278,8 +278,6 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
             }
         }
 
-
-
         poolAsteroides.execute(new GenerarAsteroides(VELOCIDAD_ASTEROIDE,
                 this, nAsteroids, width, height, nave.getAlto(),
                 PASO_VELOCIDAD, nAsteroidesSeguiendo, asteroides));
@@ -290,41 +288,31 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         //Movimiento de los asteroides de izquierda a derecha y colision con la nave
         for (int i = 0; i < asteroides.size(); i++) {
             Asteroide asteroide = (Asteroide) asteroides.get(i);
-            asteroide.setOnColisionListener(new Asteroide.OnColisionListener() {
-                @Override
-                public void colision() {
-                    if (compruebaColision(asteroide, nave, asteroides, null)) {
-                        //Se le quita vida
-                        System.out.println("LA NAVE MUERE");
-                        if (asteroide.seguirJugador()) {
-//                            nAsteroidesSeguiendo--;
-                        }
-                    }
-                }
-            });
             asteroide.movimientoAsteroide();
-
+            if (compruebaColision(asteroide, nave, asteroides, null)) {
+                //Se le quita vida
+                System.out.println("LA NAVE MUERE");
+                if (asteroide.seguirJugador()) {
+                    nAsteroidesSeguiendo--;
+                }
+            }
         }
 
         //Movimiento de los marcianos de izquierda a derecha y colision con la nave
         for (int i = 0; i < marcianos.size(); i++) {
             Marciano marciano = (Marciano) marcianos.get(i);
-            marciano.setOnColisionListener(new Marciano.OnColisionListener() {
-                @Override
-                public void colision() {
-                    if (compruebaColision(marciano, nave, marcianos, null)) {
-                        //Se le quita vida
-                        System.out.println("LA NAVE MUERE");
-                        if(marciano.seguirJugador()){
-                            nMarcianosSeguiendo--;
-                        }
-                        ++nErrores;
-                        anotarPuntos(nAciertos, nErrores);
-                    }
-                }
-            });
             marciano.movimientoMarciano();
+            if (compruebaColision(marciano, nave, marcianos, null)) {
+                //Se le quita vida
+                System.out.println("Cuando colisiona fuera del objeto");
 
+                System.out.println("LA NAVE MUERE");
+                if(marciano.seguirJugador()){
+                    nMarcianosSeguiendo--;
+                }
+                ++nErrores;
+                anotarPuntos(nAciertos, nErrores);
+            }
         }
     }
 
@@ -575,7 +563,6 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
 
     public void setnAsteroidesSeguiendo(int nAsteroidesSeguiendo) {
         this.nAsteroidesSeguiendo = nAsteroidesSeguiendo;
-
     }
 
     public int getnMarcianosSeguiendo() {
@@ -609,7 +596,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     public void setdispara(boolean dispara) {
         this.dispara = dispara;
     }
-
+    //Hebras
     private class HebraDisparo extends Thread {
         @Override
         public void run() {
@@ -672,10 +659,8 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
                     e.printStackTrace();
                 }
             }
-
         }
     }
-
 }
 
 

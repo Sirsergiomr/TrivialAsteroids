@@ -15,7 +15,7 @@ public class GenerarMarcianos extends Thread{
     private  ArrayList<Respuesta> respuestas ;
     private int nMarcianos;//Cantidad de enemigos
     private EasyEngineV1 context;
-    private int height, width, defaultShipHeight, VELOCIDAD_MARCIANO, nMarcianosSeguiendo;
+    private int height, width, defaultShipHeight, VELOCIDAD_MARCIANO, nMarcianosSeguiendo=0;
     private double PASO_VELOCIDAD_ASTEROIDE;
     private GraphicObject nave;
     private Random random = new Random();
@@ -52,16 +52,6 @@ public class GenerarMarcianos extends Thread{
             try {
                 Marciano marciano = new Marciano(context, R.drawable.marciano02, height, VELOCIDAD_MARCIANO, defaultShipHeight);
 
-                marciano.setTipo(GraphicObject.TIPO_MARCIANO, new GraphicObject.OnFinishListener() {
-                    @Override
-                    public void onFinish() {
-                        if(marciano.seguirJugador()){
-                            nMarcianosSeguiendo--;
-                        }
-                        marcianos.remove(marciano);
-                    }
-                });
-
                 int posX = width;
                 int posY = (int) (Math.random() * (height - marciano.getAlto()));
 
@@ -84,11 +74,23 @@ public class GenerarMarcianos extends Thread{
                 marciano.setAlto(90);
                 marciano.setAncho(120);
                 marciano.setRadioColision((90 + 120) / 4);
-                if(nMarcianosSeguiendo < 2){
-                    nMarcianosSeguiendo++;
+                if(context.getnMarcianosSeguiendo() < 2){
+                    nMarcianosSeguiendo= context.getnMarcianosSeguiendo() +1 ;
+                    System.out.println("nMarcianosSiguiendo ="+nMarcianosSeguiendo );
+                    context.setnMarcianosSeguiendo(nMarcianosSeguiendo);
                     marciano.setSeguimiento(true);
                     marciano.setPosY((int) nave.getPosY());
                 }
+                marciano.setTipo(GraphicObject.TIPO_MARCIANO, new GraphicObject.OnFinishListener() {
+                    @Override
+                    public void onFinish() {
+                        if(marciano.seguirJugador()){
+                            nMarcianosSeguiendo= context.getnMarcianosSeguiendo() -1 ;
+                            context.setnMarcianosSeguiendo(nMarcianosSeguiendo);
+                        }
+                        marcianos.remove(marciano);
+                    }
+                });
                 marcianos.add(marciano);
             } catch (Exception e) {
                 e.printStackTrace();

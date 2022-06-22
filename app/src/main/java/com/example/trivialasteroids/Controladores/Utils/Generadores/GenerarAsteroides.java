@@ -14,7 +14,7 @@ public class GenerarAsteroides extends Thread{
     private int nAsteroids;//Cantidad de enemigos
     private int width, height, defaultShipHeight;
     private double PASO_VELOCIDAD;
-    private int nAsteroidesSeguiendo;
+    private int nAsteroidesSeguiendo=0;
     private  List<GraphicObject> asteroides;
 
     public GenerarAsteroides(int VELOCIDAD_ASTEROIDE, EasyEngineV1 context, int nAsteroids, int width, int height,
@@ -54,10 +54,10 @@ public class GenerarAsteroides extends Thread{
             asteroide.setPos(posX + asteroide.getIncX(), posY);
 
             asteroide.setActivo(true);
-            if (nAsteroidesSeguiendo < 2) {//0, 1 , 2
-                nAsteroidesSeguiendo++;
+            if (context.getnAsteroidesSeguiendo() < 2) {
+                nAsteroidesSeguiendo = context.getnAsteroidesSeguiendo()+1;
+                context.setnAsteroidesSeguiendo(nAsteroidesSeguiendo);
                 asteroide.setSeguimiento(true);
-
                 System.out.println("nAsteroidesSeguiendo = "+nAsteroidesSeguiendo);
             }
             asteroides.add(asteroide);

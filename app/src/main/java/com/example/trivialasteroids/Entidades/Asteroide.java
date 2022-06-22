@@ -7,7 +7,6 @@ public class Asteroide extends GraphicObject {
     private int height;
     private int VELOCIDAD_ASTEROIDE;
     private int defaultShipHeight;
-    private OnColisionListener onColisionListener;
 
     public Asteroide(EasyEngineV1 view, int drawableID, int height, int defaultShipHeight, int VELOCIDAD_ASTEROIDE) {
         super(view, drawableID);
@@ -25,23 +24,6 @@ public class Asteroide extends GraphicObject {
             if (this.getPosY() <= defaultShipHeight / 2) {
                 this.setPosY((int) (this.getPosY() + this.getAlto()));
             }
-            try {
-                onColisionListener.colision();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }
-    public interface OnColisionListener{
-        void colision();
-    }
-
-    public OnColisionListener getOnColisionListener() {
-        return onColisionListener;
-    }
-
-    public void setOnColisionListener(OnColisionListener onColisionListener) {
-        this.onColisionListener = onColisionListener;
-    }
-
 }
