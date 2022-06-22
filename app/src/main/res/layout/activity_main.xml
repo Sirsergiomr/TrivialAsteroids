@@ -5,163 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/purple_200"
-    android:elevation="1dp"
     android:orientation="horizontal"
     tools:context=".MainActivity">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/corner"
-        style="@style/Widget.App.CardView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="30dp"
-        app:cardPreventCornerOverlap="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/vida1"
-                android:layout_width="37dp"
-                android:layout_height="31dp"
-                android:layout_marginStart="32dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/sprite_heart" />
-
-            <ImageView
-                android:id="@+id/vida2"
-                android:layout_width="45dp"
-                android:layout_height="31dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/vida1"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/sprite_heart" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/corner_quest"
-                style="@style/Widget.App.CardView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="#FBD9D6"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="2dp"
-                app:cardPreventCornerOverlap="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/vida2"
-                app:layout_constraintTop_toTopOf="parent">>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/tv_pregunta"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="¿Cuales no son capitales extranjeras?"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/corner"
-        style="@style/Widget.App.CardView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="30dp"
-        app:cardPreventCornerOverlap="false"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/vida1"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="32dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/sprite_heart" />
-
-            <ImageView
-                android:id="@+id/vida2"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/vida1"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/sprite_heart" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/corner_quest"
-                style="@style/Widget.App.CardView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="#FBD9D6"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="2dp"
-                app:cardPreventCornerOverlap="false"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/vida2"
-                app:layout_constraintTop_toTopOf="parent">>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <TextView
-                        android:id="@+id/tv_pregunta"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="¿Cuales no son capitales extranjeras?"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textStyle="bold"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.google.android.material.card.MaterialCardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine
+    <com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1
         android:id="@+id/surfaceSpaceShip"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:orientation="horizontal"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/corner"
+        app:layout_constraintTop_toTopOf="@+id/game_over"
         app:layout_constraintVertical_bias="0.0"
         tools:visibility="visible" />
 
@@ -169,7 +27,8 @@
         android:id="@+id/tv_level"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="16dp"
         android:text="LV 0"
         android:textAlignment="center"
         android:textAllCaps="true"
@@ -178,26 +37,44 @@
         android:textStyle="bold"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/corner" />
+        app:layout_constraintTop_toTopOf="@+id/tv_partida" />
 
-    <Button
-        android:id="@+id/acribillar"
-        android:layout_width="53dp"
-        android:layout_height="49dp"
-        android:layout_marginEnd="68dp"
-        android:layout_marginBottom="40dp"
-        app:cornerRadius="15dp"
-        app:icon="@drawable/misil1"
-        app:iconTint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <ImageView
+        android:id="@+id/vida1"
+        android:layout_width="37dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="68dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/sprite_heart" />
 
+    <ImageView
+        android:id="@+id/vida2"
+        android:layout_width="45dp"
+        android:layout_height="31dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toEndOf="@+id/vida1"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/sprite_heart" />
+
+    <TextView
+        android:id="@+id/tv_pregunta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:text="¿Cuales no son capitales extranjeras?"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/vida2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/vida2"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/game_over"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -213,23 +90,23 @@
         android:layout_width="3dp"
         android:layout_height="344dp"
         android:background="#82B1FF"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="38dp"
         android:layout_height="44dp"
         app:layout_constraintStart_toEndOf="@+id/view"
-        app:layout_constraintTop_toBottomOf="@+id/corner"
+        app:layout_constraintTop_toTopOf="@+id/view"
         app:srcCompat="@drawable/sprite_up" />
 
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="38dp"
         android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/view"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:srcCompat="@drawable/sprite_up_down" />
 
@@ -237,28 +114,29 @@
         android:id="@+id/try_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="68dp"
         android:text="Try again"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:icon="@android:drawable/ic_popup_sync"
         app:iconTint="@color/black"
-        app:layout_constraintBottom_toTopOf="@+id/acribillar"
-        app:layout_constraintEnd_toEndOf="@+id/acribillar"
-        app:layout_constraintStart_toStartOf="@+id/acribillar"
-        tools:visibility="visible" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="invisible" />
 
     <Button
         android:id="@+id/bt_pause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:contentDescription=" "
         android:textColor="@color/black"
         app:icon="@android:drawable/ic_media_pause"
         app:iconTint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_level" />
-
+        app:layout_constraintTop_toBottomOf="@+id/tv_pregunta" />
     <TextView
         android:id="@+id/tv_pause"
         android:layout_width="wrap_content"
@@ -268,13 +146,11 @@
         android:textSize="36sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/surfaceSpaceShip"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.493"
-        tools:visibility="gone" />
+        app:layout_constraintTop_toTopOf="@+id/game_over"
+        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/iv_win"
@@ -283,26 +159,23 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.499"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/surfaceSpaceShip"
         app:srcCompat="@drawable/sprite_win"
-        tools:visibility="gone" />
+        tools:visibility="visible" />
 
     <Button
         android:id="@+id/bt_come_back"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:text="Come back"
         android:textColor="@color/black"
         android:visibility="gone"
-        app:cornerRadius="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/surfaceSpaceShip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_win"
-        app:shapeAppearance="@style/ShapeAppearance.App.SmallComponent"
-        tools:visibility="gone" />
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_partida"
@@ -313,10 +186,19 @@
         android:textSize="24sp"
         android:textStyle="bold"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/corner"
+        app:layout_constraintEnd_toStartOf="@+id/bt_pause"
+        app:layout_constraintStart_toEndOf="@+id/vida2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pregunta"
         tools:visibility="visible" />
 
+    <View
+        android:id="@+id/view2"
+        android:layout_width="121dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="8dp"
+        android:background="#FF0808"
+        app:layout_constraintEnd_toEndOf="@+id/vida2"
+        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintTop_toBottomOf="@+id/tv_pregunta" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

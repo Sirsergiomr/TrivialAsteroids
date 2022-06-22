@@ -2,9 +2,7 @@ package com.example.trivialasteroids;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.content.pm.ActivityInfo;
-import android.database.AbstractCursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,37 +15,29 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine;
-import com.example.trivialasteroids.Controladores.BasicEngine.Functions;
-import com.example.trivialasteroids.Modelos.Pregunta;
+import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
+import com.example.trivialasteroids.Controladores.Modelos.Pregunta;
 
 import org.json.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Juego extends AppCompatActivity {
-    EasyEngine myGameView;
-    Button acribillar, tryAgain, bt_pause, bt_come_back;
-    int vidasExtras = 3;
-    ImageView vida1, vida2, gameOver, iv_win;
-    boolean pause=false, win =false, gameover=false;
-    TextView tv_pause;
-    TextView tv_partida;
-    TextView tv_pregunta;
-    TextView tv_level;
-    ObjectAnimator animator = null;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        setContentView(R.layout.activity_main);
+    private EasyEngineV1 rocket;
+    private Button acribillar, tryAgain, bt_pause, bt_come_back;
+    private int vidasExtras = 3;
+    private ImageView vida1, vida2, gameOver, iv_win;
+    private boolean pause=false, win =false, gameover=false;
+    private TextView tv_pause;
+    private TextView tv_partida;
+    private TextView tv_pregunta;
+    private TextView tv_level;
+    private ObjectAnimator animator = null;
+    private int ndisparos=0;
+    private int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
+    private boolean finalLv = false;//Indica si estas en el último nivel o no;
 
-        acribillar = findViewById(R.id.acribillar);
+    public void initUi(){
         vida1 = findViewById(R.id.vida1);
         vida2 = findViewById(R.id.vida2);
         gameOver = findViewById(R.id.game_over);
@@ -57,54 +47,65 @@ public class Juego extends AppCompatActivity {
         tv_pause = findViewById(R.id.tv_pause);
         tv_pregunta = findViewById(R.id.tv_pregunta);
         tv_level = findViewById(R.id.tv_level);
-        myGameView = findViewById(R.id.surfaceSpaceShip);
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        setContentView(R.layout.activity_main);
+
+        initUi();
+
+        try {
+            rocket = findViewById(R.id.surfaceSpaceShip);
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
         iv_win = findViewById(R.id.iv_win);
         bt_come_back = findViewById(R.id.bt_come_back);
-        acribillar.setOnClickListener(view -> {
-            myGameView.Dispara();
-        });
+
         tryAgain.setOnClickListener(view -> {
-            //TODO Volver a 0 todos los valores.
             reinicia();
         });
+
         bt_pause.setOnClickListener(view -> {
-            setPause();
+            //DO NOTHING
         });
+
         bt_come_back.setOnClickListener(view -> {
-            Functions.Destroy(myGameView.getGameLoopThread());
             onBackPressed();
         });
     }
+
     public void setPause(){
         if(!pause){
             pause=true;
-            myGameView.getGameLoopThread().pausar();
+//            myGameView.getGameLoopThread().pausar();
             tryAgain.setVisibility(View.VISIBLE);
             tv_pause.setVisibility(View.VISIBLE);
         }else{
             tv_pause.setVisibility(View.GONE);
             pause=false;
-            myGameView.getGameLoopThread().reanudar();
+//            myGameView.getGameLoopThread().reanudar();
             tryAgain.setVisibility(View.GONE);
         }
     }
+
     @Override
     protected void onRestart() {
         Log.i("Estado","juegos.onRestart");
         super.onRestart();
     }
-
-
     @Override
     protected void onResume() {
         Log.i("Estado","juegos.onResume");
         super.onResume();
-        myGameView.getGameLoopThread().reanudar();
+//        myGameView.getGameLoopThread().reanudar();
     }
     @Override
     protected void onPause() {
         super.onPause();
-        myGameView.getGameLoopThread().pausar();
     }
     @Override
     protected void onDestroy() {
@@ -116,6 +117,10 @@ public class Juego extends AppCompatActivity {
         if (hasFocus) {
             hideSystemUI();
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     private void hideSystemUI() {
@@ -153,20 +158,21 @@ public class Juego extends AppCompatActivity {
     }
 
     public void activaGameOver() {
+        rocket.stopDrawThread();
         gameover=true;
         win = false;
         gameOver.setVisibility(View.VISIBLE);
-        acribillar.setEnabled(false);
+//        acribillar.setEnabled(false);
         tryAgain.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.GONE);
-        myGameView.getNave().setActivo(false);
+        rocket.getNave().setActivo(false);
     }
 
     public void reinicia() {
         gameover=false;
         win = false;
         pause=false;
-        acribillar.setEnabled(true);
+//        acribillar.setEnabled(true);
         bt_pause.setVisibility(View.VISIBLE);
         tryAgain.setVisibility(View.GONE);
         gameOver.setVisibility(View.GONE);
@@ -174,63 +180,63 @@ public class Juego extends AppCompatActivity {
         vida1.setVisibility(View.VISIBLE);
         vida2.setVisibility(View.VISIBLE);
         tv_pause.setVisibility(View.GONE);
-        myGameView.reinicia();
-        RebootBasicVariables();
-        setTv_partida("¡A disparar!");
+        rocket.reinicio();
+//        myGameView.reinicia();
     }
-    boolean finalLv = false;
-    public void NextLevel( int ActualLevel, ArrayList<JSONObject> niveles){
-        if(niveles.size()-1 == ActualLevel){
+
+    public void nextLevel(int ActualLevel, ArrayList<JSONObject> niveles){
+
+        System.out.println("NIVEL ACTUAL = "+ActualLevel);
+        System.out.println("NIVEL TOTAL = "+(niveles.size()-1));
+        if(niveles.size()-1 == ActualLevel){//size = 2; 2-1 == 0 no, 2-1 = 1 si final true
             finalLv = true;
         }else{
-            ++ActualLevel;
+            ++ActualLevel;//0 - > 1
             tv_level.setText("LV "+ActualLevel);
 
             animationLevel();
 
-            myGameView.setLevel(niveles.get(ActualLevel), ActualLevel);
+            rocket.setLevel(niveles.get(ActualLevel), ActualLevel);// niveles.get(1), 1
         }
     }
 
-
-    public void RebootBasicVariables(){
-        myGameView.setNAciertos(0);
-        myGameView.setXAciertos(0);
-        myGameView.setNErrores(0);
-        myGameView.setYErrores(0);
+    public void rebootBasicVariables(){
+        rocket.setNAciertos(0);
+        rocket.setNErrores(0);
     }
-    int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
 
     public void compruebaPartida(int nAciertos, int nErrores, int xAciertos,
-                                 int yErrores, int nPreguntas, int nPAcertadas,
+                                 int maxErrores, int nPreguntas, int nPAcertadas,
                                  ArrayList<Pregunta> preguntas,
                                  ArrayList<JSONObject> niveles, int ActualLevel){
         if(animator!= null){
             animator.end();
         }
         tv_partida.setVisibility(View.VISIBLE);
-        tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+yErrores);
-        System.out.println("NPREGUNTAS ACERTDAS = "+nPAcertadas);
+        tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+maxErrores);
+        System.out.println("NPREGUNTAS ACERTADAS = "+nPAcertadas);
 
-        if(nAciertos == xAciertos){
+        if(nAciertos == xAciertos){//10 == 10 a
+            System.out.println("NPREGUNTAS ACERTADAS = "+nPAcertadas + "NPREGUNTAS = "+nPreguntas+" NIVEL = "+ActualLevel+" NIVEL TOTAL = "+(niveles.size()-1));
             if(nPreguntas == nPAcertadas && gameover == false && nPAcertadas!=0){
-                //TODO CAMBIO DE NIVEL, POR AHORA ES WIN
-                RebootBasicVariables();
-                NextLevel(ActualLevel, niveles);
+                rebootBasicVariables();
+                //Se realiza el cambio de nivel y se activa win
+                nextLevel(ActualLevel, niveles);
                 if(finalLv){
                     activaWin();
                 }
             }
+
             try {
                 ++siguiente_pregunta;
-                System.out.println("NPREGUNTAS ACERTDAS = "+siguiente_pregunta);
+                System.out.println("NPREGUNTA ACTUAL = "+siguiente_pregunta);
 
                 if(siguiente_pregunta <= preguntas.size()){
-                        RebootBasicVariables();
-                        tv_pregunta.setText(preguntas.get(siguiente_pregunta-1).getPregunta());
-                        myGameView.setCurrentQuestion(preguntas.get(siguiente_pregunta-1));
-                        myGameView.setNPAcertadas(siguiente_pregunta);
-                        tv_partida.setText("¡Cambio de pregunta!");
+                    rebootBasicVariables();
+                    tv_pregunta.setText(preguntas.get(siguiente_pregunta - 1).getPregunta());
+                    rocket.setCurrentQuestion(preguntas.get(siguiente_pregunta - 1));
+                    rocket.setNPAcertadas(siguiente_pregunta);
+                    tv_partida.setText("¡Cambio de pregunta!");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -238,22 +244,24 @@ public class Juego extends AppCompatActivity {
         }
 
         //Y si las fallas todas en la mima pregunta game over y se reinicia al primer lv
-        if(nErrores == yErrores && win== false && nErrores!=0){
+        if(nErrores == maxErrores && !win && nErrores!=0){
             activaGameOver();
         }
-        //TODO Comprobar la cantidad de preguntas respondidas por nivel
-    }
 
+        //Variables info
+        System.out.println("");
+    }
 
     private void activaWin() {
         win= true;
         gameover = false;
         tv_partida.setVisibility(View.VISIBLE);
-        acribillar.setEnabled(false);
+//        acribillar.setEnabled(false);
         bt_pause.setVisibility(View.GONE);
         iv_win.setVisibility(View.VISIBLE);
         bt_come_back.setVisibility(View.VISIBLE);
-        myGameView.getNave().setActivo(false);
+        rocket.getNave().setActivo(false);
+        rocket.clearMisiles();
     }
 
     public void setTv_pregunta (String pregunta){
@@ -264,12 +272,6 @@ public class Juego extends AppCompatActivity {
         tv_level.setText(level);
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        myGameView.getGameLoopThread().reanudar();
-        Functions.Destroy(myGameView.getGameLoopThread());
-    }
     public void animationLevel(){
         // adding the color to be shown
         animator = ObjectAnimator.ofInt(tv_level, "textColor", Color.BLUE, Color.RED, Color.GREEN);
@@ -287,7 +289,5 @@ public class Juego extends AppCompatActivity {
 
     }
 
-    public void setTv_partida(String mensaje) {
-        this.tv_partida.setText(mensaje);
-    }
+
 }

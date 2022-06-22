@@ -2,24 +2,14 @@ package com.example.trivialasteroids;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Trace;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngine;
-
-import java.nio.file.attribute.GroupPrincipal;
-import java.util.AbstractCollection;
 
 /**
  *

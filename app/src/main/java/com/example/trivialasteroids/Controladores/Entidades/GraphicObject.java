@@ -1,18 +1,18 @@
-package com.example.trivialasteroids.Modelos;
+package com.example.trivialasteroids.Controladores.Entidades;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.view.SurfaceView;
-import android.view.View;
 
-import java.util.function.BiPredicate;
+import com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1;
 
 public class GraphicObject {
+    public final static int TIPO_MARCIANO = 0;
+    public final static int TIPO_ASTEROIDE = 1;
+    public final static int TIPO_NAVE = 2;
 
+    private int tipo;
     private Drawable drawable;   //Imagen que dibujaremos
     private double posX;
     private double posY;   //Posición
@@ -33,12 +33,16 @@ public class GraphicObject {
     private boolean activo=false;
     private String respuestaAsociada;
     private boolean verdadero;
+    private OnFinishListener onFinishListener;
+    private boolean seguimiento=false;
+
     //Donde dibujamos el gráfico (usada en view.ivalidate)
-    private View view;
+    private EasyEngineV1 view;
     // Para determinar el espacio a borrar (view.ivalidate)
     public static final int MAX_VELOCIDAD = 50;
 
-    public GraphicObject(View view, int drawableID ){
+
+    public GraphicObject(EasyEngineV1 view, int drawableID ){
         this.view = view;
         this.drawable = view.getResources().getDrawable(drawableID,null);
         ancho = drawable.getIntrinsicWidth();
@@ -71,7 +75,7 @@ public class GraphicObject {
             lastMilisAnimacion=System.currentTimeMillis();
         }
     }
-
+    //RENDER DEL OBJETO
     public void DrawGraphic(Canvas canvas){
         canvas.save();
         int x=(int) (posX+ancho/2);
@@ -101,8 +105,30 @@ public class GraphicObject {
 
     public void incrementaPos(double factor){//
         posX+=incX * factor;
+
         // Si salimos de la pantalla, corregimos posición
-        if(posX<-ancho/2) {posX=view.getWidth()-ancho/2;}
+
+        if(posX<-ancho/2) {
+
+            posX=view.getWidth()-ancho/2;
+
+            if(seguimiento){
+
+                posY = (int) view.getNave().getPosY();
+
+            }
+
+            try {
+
+                onFinishListener.onFinish();
+
+            } catch (Exception e) {
+
+                e.printStackTrace();
+
+            }
+        }
+
         if(posX>view.getWidth()-ancho/2) {posX=-ancho/2;}
         posY+=incY * factor;
         if(posY<-alto/2)
@@ -119,292 +145,237 @@ public class GraphicObject {
     public double distancia(GraphicObject g) {
         return Math.hypot(posX-g.posX, posY-g.posY);
     }
-
     public boolean verificaColision(GraphicObject g) {
         return(distancia(g) < (radioColision+g.radioColision));
     }
-
     public int getTiempoEnPantalla() {
         return tiempoEnPantalla;
     }
-
     public void setTiempoEnPantalla(int tiempoEnPantalla) {
         this.tiempoEnPantalla = tiempoEnPantalla;
     }
-
     public boolean isActivo() {
         return activo;
     }
-
     public void setActivo(boolean activo) {
         this.activo = activo;
     }
-
     /**
      * @return the drawable
      */
     public Drawable getDrawable() {
         return drawable;
     }
-
     /**
      * @param drawable the drawable to set
      */
     public void setDrawable(Drawable drawable) {
         this.drawable = drawable;
     }
-
     /**
      * @return the posX
      */
     public double getPosX() {
         return posX;
     }
-
     /**
      * @param posX the posX to set
      */
     public void setPosX(int posX) {
         this.posX = posX;
     }
-
     /**
      * @return the posY
      */
     public double getPosY() {
         return posY;
     }
-
     /**
      * @param posY the posY to set
      */
     public void setPosY(int posY) {
         this.posY = posY;
     }
-
     /**
      * @return the incX
      */
     public double getIncX() {
         return incX;
     }
-
     /**
      * @param incX the incX to set
      */
     public void setIncX(double incX) {
         this.incX = incX;
     }
-
     /**
      * @return the incY
      */
     public double getIncY() {
         return incY;
     }
-
     /**
      * @param incY the incY to set
      */
     public void setIncY(double incY) {
         this.incY = incY;
     }
-
     /**
      * @return the angulo
      */
     public int getAngulo() {
         return angulo;
     }
-
     /**
      * @param angulo the angulo to set
      */
     public void setAngulo(int angulo) {
         this.angulo = angulo;
     }
-
     /**
      * @return the rotacion
      */
     public int getRotacion() {
         return rotacion;
     }
-
     /**
      * @param rotacion the rotacion to set
      */
     public void setRotacion(int rotacion) {
         this.rotacion = rotacion;
     }
-
     /**
      * @return the ancho
      */
     public int getAncho() {
         return ancho;
     }
-
     /**
      * @param ancho the ancho to set
      */
     public void setAncho(int ancho) {
         this.ancho = ancho;
     }
-
     /**
      * @return the alto
      */
     public int getAlto() {
         return alto;
     }
-
     /**
      * @param alto the alto to set
      */
     public void setAlto(int alto) {
         this.alto = alto;
     }
-
     /**
      * @return the radioColision
      */
     public int getRadioColision() {
         return radioColision;
     }
-
     /**
      * @param radioColision the radioColision to set
      */
     public void setRadioColision(int radioColision) {
         this.radioColision = radioColision;
     }
-
     /**
      * @return the view
      */
-    public View getView() {
+    public EasyEngineV1 getView() {
         return view;
     }
-
     /**
      * @param view the view to set
      */
-    public void setView(View view) {
+    public void setView(EasyEngineV1 view) {
         this.view = view;
     }
-
     /**
      * @return the maxVelocidad
      */
     public static int getMaxVelocidad() {
         return MAX_VELOCIDAD;
     }
-
-
-
-
     public Bitmap getAnimacion() {
         return animacion;
     }
-
-
-
-
     public void setAnimacion(Bitmap animacion) {
         this.animacion = animacion;
     }
-
-
-
-
-
     /**
      * @return the frame
      */
     public int getFrame() {
         return frame;
     }
-
-
-
-
-
     /**
      * @param frame the frame to set
      */
     public void setFrame(int frame) {
         this.frame = frame;
     }
-
     /**
      * @return the nFrame
      */
     public int getNFrame() {
         return NFrame;
     }
-
-
     /**
      * @param nFrame the nFrame to set
      */
     public void setNFrame(int nFrame) {
         NFrame = nFrame;
     }
-
     /**
      * @return the anchoSprite
      */
     public int getAnchoSprite() {
         return anchoSprite;
     }
-
-
-
-
-
     /**
      * @param anchoSprite the anchoSprite to set
      */
     public void setAnchoSprite(int anchoSprite) {
         this.anchoSprite = anchoSprite;
     }
-
-
-
-
-
     /**
      * @return the altoSprite
      */
     public int getAltoSprite() {
         return altoSprite;
     }
-
-
-
-
-
     /**
      * @param altoSprite the altoSprite to set
      */
     public void setAltoSprite(int altoSprite) {
         this.altoSprite = altoSprite;
     }
-
     /**
      * @return the iPasoanimacion
      */
     public int getiPasoanimacion() {
         return iPasoanimacion;
     }
-
     /**
      * @param iPasoanimacion the iPasoanimacion to set
      */
     public void setiPasoanimacion(int iPasoanimacion) {
         this.iPasoanimacion = iPasoanimacion;
     }
+    public boolean seguirJugador(){
+        return seguimiento;
+    }
+    public void setSeguimiento(boolean seguimiento){
+        this.seguimiento = seguimiento;
+    }
+    public void setTipo(int tipo, OnFinishListener onFinishListener) {
+        this.tipo = tipo;
+        this.onFinishListener = onFinishListener;
+    }
 
-
+    public interface OnFinishListener {
+        void onFinish();
+    }
 }
