@@ -10,7 +10,7 @@
         android:theme="@style/Theme.TrivialAsteroids">
 
         <activity
-            android:name=".Juego"
+            android:name=".LauncherMJ03"
             android:label="@string/title_activity_juego"
             android:screenOrientation="landscape"
             android:exported="true">

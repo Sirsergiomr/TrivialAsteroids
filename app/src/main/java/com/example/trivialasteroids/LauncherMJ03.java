@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Juego extends AppCompatActivity {
+public class LauncherMJ03 extends AppCompatActivity {
     private EasyEngineV1 rocket;
     private Button acribillar, tryAgain, bt_pause, bt_come_back;
     private int vidasExtras = 3;
@@ -33,7 +33,6 @@ public class Juego extends AppCompatActivity {
     private TextView tv_pregunta;
     private TextView tv_level;
     private ObjectAnimator animator = null;
-    private int ndisparos=0;
     private int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
     private boolean finalLv = false;//Indica si estas en el último nivel o no;
 
@@ -53,7 +52,7 @@ public class Juego extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.mj03_rocket);
 
         initUi();
 
@@ -162,7 +161,6 @@ public class Juego extends AppCompatActivity {
         gameover=true;
         win = false;
         gameOver.setVisibility(View.VISIBLE);
-//        acribillar.setEnabled(false);
         tryAgain.setVisibility(View.VISIBLE);
         bt_pause.setVisibility(View.GONE);
         rocket.getNave().setActivo(false);
@@ -171,17 +169,11 @@ public class Juego extends AppCompatActivity {
     public void reinicia() {
         gameover=false;
         win = false;
-        pause=false;
-//        acribillar.setEnabled(true);
-        bt_pause.setVisibility(View.VISIBLE);
-        tryAgain.setVisibility(View.GONE);
         gameOver.setVisibility(View.GONE);
-        vidasExtras = 3;
-        vida1.setVisibility(View.VISIBLE);
-        vida2.setVisibility(View.VISIBLE);
-        tv_pause.setVisibility(View.GONE);
+        siguiente_pregunta= 1;
+        tryAgain.setVisibility(View.GONE);
+        bt_pause.setVisibility(View.VISIBLE);
         rocket.reinicio();
-//        myGameView.reinicia();
     }
 
     public void nextLevel(int ActualLevel, ArrayList<JSONObject> niveles){
@@ -209,15 +201,17 @@ public class Juego extends AppCompatActivity {
                                  int maxErrores, int nPreguntas, int nPAcertadas,
                                  ArrayList<Pregunta> preguntas,
                                  ArrayList<JSONObject> niveles, int ActualLevel){
+
+        System.out.println("INFORME: nAciertos = "+nAciertos+" nErrores = "+nErrores+" xAciertos = "+xAciertos+" maxErrores = "+maxErrores+" nPreguntas = "+nPreguntas+" nPAcertadas = "+nPAcertadas+"ActualLevel = "+ActualLevel);
+
         if(animator!= null){
             animator.end();
         }
         tv_partida.setVisibility(View.VISIBLE);
         tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+maxErrores);
-        System.out.println("NPREGUNTAS ACERTADAS = "+nPAcertadas);
+
 
         if(nAciertos == xAciertos){//10 == 10 a
-            System.out.println("NPREGUNTAS ACERTADAS = "+nPAcertadas + "NPREGUNTAS = "+nPreguntas+" NIVEL = "+ActualLevel+" NIVEL TOTAL = "+(niveles.size()-1));
             if(nPreguntas == nPAcertadas && gameover == false && nPAcertadas!=0){
                 rebootBasicVariables();
                 //Se realiza el cambio de nivel y se activa win
@@ -229,8 +223,7 @@ public class Juego extends AppCompatActivity {
 
             try {
                 ++siguiente_pregunta;
-                System.out.println("NPREGUNTA ACTUAL = "+siguiente_pregunta);
-
+                System.out.println("SIGUIENTE PREGUNTA = "+(siguiente_pregunta-1));
                 if(siguiente_pregunta <= preguntas.size()){
                     rebootBasicVariables();
                     tv_pregunta.setText(preguntas.get(siguiente_pregunta - 1).getPregunta());
@@ -256,7 +249,6 @@ public class Juego extends AppCompatActivity {
         win= true;
         gameover = false;
         tv_partida.setVisibility(View.VISIBLE);
-//        acribillar.setEnabled(false);
         bt_pause.setVisibility(View.GONE);
         iv_win.setVisibility(View.VISIBLE);
         bt_come_back.setVisibility(View.VISIBLE);
@@ -288,6 +280,4 @@ public class Juego extends AppCompatActivity {
         animator.start();
 
     }
-
-
 }

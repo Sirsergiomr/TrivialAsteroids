@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 //      setContentView(new EasyEngine(this));
-        setContentView(R.layout.maininstance_layout);
+        setContentView(R.layout.mj03_rocket_menu);
         bt_start = findViewById(R.id.bt_start);
         pg_cargando = findViewById(R.id.pg_cargando);
         tv_carga = findViewById(R.id.tv_carga);
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             ++size;
         }
 
-        Intent iniciarPartida = new Intent(this, Juego.class);
+        Intent iniciarPartida = new Intent(this, LauncherMJ03.class);
         startActivity(iniciarPartida);
     }
     @Override

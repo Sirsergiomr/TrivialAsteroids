@@ -25,7 +25,7 @@ import com.example.trivialasteroids.Controladores.Utils.Generadores.GenerarMarci
 import com.example.trivialasteroids.Controladores.Entidades.Asteroide;
 import com.example.trivialasteroids.Controladores.Entidades.Marciano;
 import com.example.trivialasteroids.Controladores.Entidades.Misil;
-import com.example.trivialasteroids.Juego;
+import com.example.trivialasteroids.LauncherMJ03;
 import com.example.trivialasteroids.Controladores.Entidades.GraphicObject;
 import com.example.trivialasteroids.Controladores.Modelos.Pregunta;
 import com.example.trivialasteroids.Controladores.Modelos.Respuesta;
@@ -80,14 +80,16 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     private int VELOCIDAD_ASTEROIDE = 5;
     private int VELOCIDAD_MARCIANO = 5;
 
-    private final int nAsteroids = 5;//Cantidad de enemigos
+    private final int nAsteroids = 0;//Cantidad de enemigos
     private final int nMarcianos = 5;//Cantidad de enemigos
     private int CANTIDAD_MISILES = 5;
     // Datos en relacion con las respuestas
     private int xAciertos = 10;//Cantidad de aciertos que se le otorga al usuario
     private int maxErrores = 10;//Errores maximos a cometer por el usuario
+
     private int nAciertos = 0;// Aciertos de la pregunta actual
     private int nErrores = 0;//Errores de la pregunta actual
+
     private int nPreguntas = 0;//Cantidad de preguntas de ese nivel
     private int nPAacertadas = -1;//preguntas acertasdas si hay 3 preuntas y aciertas 3 pasas a la siguiente :D
     private int ActualLevel = 0;//Contador de niveles
@@ -188,9 +190,12 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         }
 
         surfaceReady = true;
+
+        //TODO Cambia startDrawThrea al init y el init en vez de iniciarse en el constructor se inicia despues de la carga de datos que se le pase
+        //TODO es decir, a jsonData se le pasa una cadena de texto desde el bundle con los datos de los niveles y todas las preguntas, además de las posición por la que se desea iniciar ese nivel;
         startDrawThread();
 
-        ((Juego) c).setTv_pregunta(currentQuestion.getPregunta());
+        ((LauncherMJ03) c).setTv_pregunta(currentQuestion.getPregunta());
         Log.d(LOGTAG, "Created");
     }
 
@@ -263,11 +268,16 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         for (int i = 0; i < asteroides.size(); i++) {
             Asteroide asteroide = (Asteroide) asteroides.get(i);
             asteroide.movimientoAsteroide();
-            if (compruebaColision(asteroide, nave, asteroides, null)) {
-                //Se le quita vida
-                System.out.println("LA NAVE MUERE");
-                if (asteroide.seguirJugador()) {
-                    nAsteroidesSeguiendo--;
+            if(nave.isActivo()){
+                if (compruebaColision(asteroide, nave, asteroides, null) && nave.isActivo()) {
+                    //Se le quita vida
+                    System.out.println("LA NAVE MUERE");
+
+
+
+                    if (asteroide.seguirJugador()) {
+                        nAsteroidesSeguiendo--;
+                    }
                 }
             }
         }
@@ -276,16 +286,18 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
         for (int i = 0; i < marcianos.size(); i++) {
             Marciano marciano = (Marciano) marcianos.get(i);
             marciano.movimientoMarciano();
-            if (compruebaColision(marciano, nave, marcianos, null)) {
-                //Se le quita vida
-                System.out.println("Cuando colisiona fuera del objeto");
+            if(nave.isActivo()){
+                if (compruebaColision(marciano, nave, marcianos, null) ) {
+                    //Se le quita vida
+                    System.out.println("Cuando colisiona fuera del objeto");
 
-                System.out.println("LA NAVE MUERE");
-                if(marciano.seguirJugador()){
-                    nMarcianosSeguiendo--;
+                    System.out.println("LA NAVE MUERE");
+                    if(marciano.seguirJugador()){
+                        nMarcianosSeguiendo--;
+                    }
+                    ++nErrores;
+                    anotarPuntos(nAciertos, nErrores);
                 }
-                ++nErrores;
-                anotarPuntos(nAciertos, nErrores);
             }
         }
     }
@@ -427,7 +439,8 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     public void jsonData() {
         nPreguntas = 0;
         try {
-            JSONObject json2 = new JSONObject("{'result': 'ok', 'message': 'levels retrieved', 'datos':{'niveles':[{'datoslv':{'preguntas':[{'pregunta': 'Sanciones entre 5000 y 6000€','respuestas':[{'contenido': 'tirar basura desde un vehículo', 'valida': True},{'contenido': 'Exceso de velocidad', 'valida': False},{'contenido': 'Execeder la tasa de alcol ', 'valida': True}]},{'pregunta':'Directiva 1999', 'respuestas':[{'contenido': 'Articulo 1 xxxxxxxxxxx', 'valida': False},{'contenido': 'Articulo 2 xxxxxxxxxxx', 'valida': True},{'contenido': 'Articulo 3 xxxxxxxxxxx', 'valida': False}]}]}},{'datoslv':{'preguntas':[{'pregunta': 'Que tiempo hace hoy','respuestas':[{'contenido': 'Soleado', 'valida': True},{'contenido': 'Invernal', 'valida': False},{'contenido': 'Primaveral ', 'valida': True}]},{'pregunta':'Cual es mi comida favorita', 'respuestas':[{'contenido': 'Brócoli', 'valida': False},{'contenido': 'Melocotón', 'valida': True},{'contenido': 'Pizza Suprema', 'valida': True}]}]}}]}}");
+            //            JSONObject json2 = new JSONObject("{'result': 'ok', 'message': 'levels retrieved', 'datos':{'niveles':[{'datoslv':{'preguntas':[{'pregunta': 'Sanciones entre 5000 y 6000€','respuestas':[{'contenido': 'tirar basura desde un vehículo', 'valida': True},{'contenido': 'Exceso de velocidad', 'valida': False},{'contenido': 'Execeder la tasa de alcol ', 'valida': True}]},{'pregunta':'Directiva 1999', 'respuestas':[{'contenido': 'Articulo 1 xxxxxxxxxxx', 'valida': False},{'contenido': 'Articulo 2 xxxxxxxxxxx', 'valida': True},{'contenido': 'Articulo 3 xxxxxxxxxxx', 'valida': False}]}]}},{'datoslv':{'preguntas':[{'pregunta': 'Que tiempo hace hoy','respuestas':[{'contenido': 'Soleado', 'valida': True},{'contenido': 'Invernal', 'valida': False},{'contenido': 'Primaveral ', 'valida': True}]},{'pregunta':'Cual es mi comida favorita', 'respuestas':[{'contenido': 'Brócoli', 'valida': False},{'contenido': 'Melocotón', 'valida': True},{'contenido': 'Pizza Suprema', 'valida': True}]}]}}]}}");
+            JSONObject json2 = new JSONObject("{'result': 'ok', 'message': 'levels retrieved', 'datos':{'niveles':[{'datoslv':{'preguntas':[{'pregunta': 'Sanciones entre 5000 y 6000€','respuestas':[{'contenido': 'tirar basura desde un vehículo', 'valida': True},{'contenido': 'Exceso de velocidad', 'valida': True},{'contenido': 'Execeder la tasa de alcol ', 'valida': True}]},{'pregunta':'Directiva 1999', 'respuestas':[{'contenido': 'Articulo 1 xxxxxxxxxxx', 'valida': True},{'contenido': 'Articulo 2 xxxxxxxxxxx', 'valida': True},{'contenido': 'Articulo 3 xxxxxxxxxxx', 'valida': True}]}]}},{'datoslv':{'preguntas':[{'pregunta': 'Que tiempo hace hoy','respuestas':[{'contenido': 'Soleado', 'valida': True},{'contenido': 'Invernal', 'valida': True},{'contenido': 'Primaveral ', 'valida': True}]},{'pregunta':'Cual es mi comida favorita', 'respuestas':[{'contenido': 'Brócoli', 'valida': True},{'contenido': 'Melocotón', 'valida': True},{'contenido': 'Pizza Suprema', 'valida': True}]}]}}]}}");
             JSONObject json = json2.getJSONObject("datos");
 
             JSONArray nivelesJSON = json.getJSONArray("niveles");
@@ -446,6 +459,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     public void preguntas() {
+        nPreguntas = 0;
         try {
             JSONArray preguntasJson = currentLevel.getJSONObject("datoslv").getJSONArray("preguntas");
             for (int pregunta = 0; pregunta < preguntasJson.length(); pregunta++) {
@@ -489,11 +503,11 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
 
     //Control de partida
     public void anotarPuntos(int nAcertadas, int nErrores) {
-        if (c instanceof Juego) {
-            ((Juego) c).runOnUiThread(new Runnable() {
+        if (c instanceof LauncherMJ03) {
+            ((LauncherMJ03) c).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((Juego) c).compruebaPartida(nAcertadas, nErrores, xAciertos,
+                    ((LauncherMJ03) c).compruebaPartida(nAcertadas, nErrores, xAciertos,
                             maxErrores, nPreguntas, nPAacertadas, preguntas,
                             niveles, ActualLevel);
                 }
@@ -580,17 +594,22 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
 
     //Reinicio del juego
     public void reinicio() {
+        nPAacertadas= -1;
         nAciertos = 0;
         nErrores = 0;
-        nPAacertadas = 0;
-        nPreguntas = 0;
-        misiles.clear();
-        marcianos.clear();
-        asteroides.clear();
-        nave.setActivo(true);
         nAsteroidesSeguiendo = 0;
         nMarcianosSeguiendo = 0;
+        preguntas.clear();
+        respuestas.clear();
+        marcianos.clear();
+        misiles.clear();
+        asteroides.clear();
+        preguntas();
+        respuestas();
+        nave.setActivo(true);
         startDrawThread();
+        ((LauncherMJ03) c).setTv_pregunta(currentQuestion.getPregunta());
+
     }
 
     public int getnAciertos() {
