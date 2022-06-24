@@ -33,7 +33,6 @@ public class LauncherMJ03 extends AppCompatActivity {
     private TextView tv_pregunta;
     private TextView tv_level;
     private ObjectAnimator animator = null;
-    private int siguiente_pregunta = 1;//Contador para que pase a la siguiente pregunta;
     private boolean finalLv = false;//Indica si estas en el último nivel o no;
 
     public void initUi(){
@@ -170,7 +169,6 @@ public class LauncherMJ03 extends AppCompatActivity {
         gameover=false;
         win = false;
         gameOver.setVisibility(View.GONE);
-        siguiente_pregunta= 1;
         tryAgain.setVisibility(View.GONE);
         bt_pause.setVisibility(View.VISIBLE);
         rocket.reinicio();
@@ -202,47 +200,41 @@ public class LauncherMJ03 extends AppCompatActivity {
                                  ArrayList<Pregunta> preguntas,
                                  ArrayList<JSONObject> niveles, int ActualLevel){
 
-        System.out.println("INFORME: nAciertos = "+nAciertos+" nErrores = "+nErrores+" xAciertos = "+xAciertos+" maxErrores = "+maxErrores+" nPreguntas = "+nPreguntas+" nPAcertadas = "+nPAcertadas+"ActualLevel = "+ActualLevel);
+            System.out.println("INFORME: nAciertos = "+nAciertos+" nErrores = "+nErrores+" xAciertos = "+xAciertos+" maxErrores = "+maxErrores+" nPreguntas = "+nPreguntas+" nPAcertadas = "+nPAcertadas+"ActualLevel = "+ActualLevel);
 
-        if(animator!= null){
-            animator.end();
-        }
-        tv_partida.setVisibility(View.VISIBLE);
-        tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+maxErrores);
+            tv_partida.setVisibility(View.VISIBLE);
+            tv_partida.setText("Aciertos = "+nAciertos +"/"+xAciertos+" Errores = "+nErrores+"/"+maxErrores);
 
-
-        if(nAciertos == xAciertos){//10 == 10 a
-            if(nPreguntas == nPAcertadas && gameover == false && nPAcertadas!=0){
+            if(nAciertos == xAciertos && !gameover && nAciertos != 0){
+                System.out.println("INFORME: PREGUNTA SUPERADA");
                 rebootBasicVariables();
-                //Se realiza el cambio de nivel y se activa win
-                nextLevel(ActualLevel, niveles);
-                if(finalLv){
-                    activaWin();
+                nPAcertadas++;
+                rocket.setNPAcertadas(nPAcertadas);
+                if(preguntas.size() == nPAcertadas){
+                    System.out.println("INFORME: NIVEL SUPERADO");
+                    nextLevel(ActualLevel, niveles);
+                    if(finalLv){
+                        System.out.println("INFORME: FINAL NIVEL");
+                        win = true;
+                        activaWin();
+                    }
+                }else{
+
                 }
+                //Cambio de pregunta
+                try {
+                    rocket.setCurrentQuestion(preguntas.get(nPAcertadas));
+                    setTv_pregunta(preguntas.get(nPAcertadas).getPregunta());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+            //Y si las fallas todas en la mima pregunta game over y se reinicia al primer lv
+            if(nErrores == maxErrores && !win && nErrores!=0){
+                activaGameOver();
             }
 
-            try {
-                ++siguiente_pregunta;
-                System.out.println("SIGUIENTE PREGUNTA = "+(siguiente_pregunta-1));
-                if(siguiente_pregunta <= preguntas.size()){
-                    rebootBasicVariables();
-                    tv_pregunta.setText(preguntas.get(siguiente_pregunta - 1).getPregunta());
-                    rocket.setCurrentQuestion(preguntas.get(siguiente_pregunta - 1));
-                    rocket.setNPAcertadas(siguiente_pregunta);
-                    tv_partida.setText("¡Cambio de pregunta!");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        //Y si las fallas todas en la mima pregunta game over y se reinicia al primer lv
-        if(nErrores == maxErrores && !win && nErrores!=0){
-            activaGameOver();
-        }
-
-        //Variables info
-        System.out.println("");
     }
 
     private void activaWin() {
@@ -278,6 +270,5 @@ public class LauncherMJ03 extends AppCompatActivity {
         // It will be repeated up to infinite time
         animator.setRepeatCount(Animation.INFINITE);
         animator.start();
-
     }
 }

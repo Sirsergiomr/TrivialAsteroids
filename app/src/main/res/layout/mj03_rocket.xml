@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/purple_200"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context=".MenuRocket">
 
     <com.example.trivialasteroids.Controladores.BasicEngine.EasyEngineV1
         android:id="@+id/surfaceSpaceShip"

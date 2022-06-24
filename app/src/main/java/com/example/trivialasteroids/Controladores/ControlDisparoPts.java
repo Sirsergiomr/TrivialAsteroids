@@ -47,7 +47,7 @@ public class ControlDisparoPts extends Thread {
                     //Eliminar el asteroide
                     for (int j = 0; j < asteroides.size(); j++) {
                         Asteroide asteroide = (Asteroide) asteroides.get(j);
-                        if (Funciones.compruebaColision(misil, asteroide, misiles, asteroides)) {
+                        if (Funciones.compruebaColision(misil, asteroide, misiles, asteroides)&& context.getNave().isActivo()) {
                             if (asteroide.seguirJugador()) {
                                 nAsteroidesSeguiendo = context.getnAsteroidesSeguiendo()-1;
                                 context.setnAsteroidesSeguiendo(nAsteroidesSeguiendo);
@@ -57,7 +57,7 @@ public class ControlDisparoPts extends Thread {
                     //Eliminar el marciano
                     for (int j = 0; j < marcianos.size(); j++) {
                         Marciano marciano = (Marciano) marcianos.get(j);
-                        if (Funciones.compruebaColision(misil, marciano, misiles, marcianos)) {
+                        if (Funciones.compruebaColision(misil, marciano, misiles, marcianos) && context.getNave().isActivo()) {
                             //Eliminar el marciano y se comprueba si la respuesta asociada es correcta
                             System.out.println("marciano eliminado");
                             if (marciano.seguirJugador()) {

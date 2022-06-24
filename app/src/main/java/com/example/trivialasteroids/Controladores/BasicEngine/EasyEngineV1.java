@@ -45,7 +45,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * MJ03-ROCKET ENGINE
  * @author Sirse
- * @version 1.2
+ * @version 1.2.0.1
  * @since 1.0
  */
 
@@ -91,7 +91,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
     private int nErrores = 0;//Errores de la pregunta actual
 
     private int nPreguntas = 0;//Cantidad de preguntas de ese nivel
-    private int nPAacertadas = -1;//preguntas acertasdas si hay 3 preuntas y aciertas 3 pasas a la siguiente :D
+    private int nPAacertadas = 0;//preguntas acertasdas si hay 3 preguntas y aciertas 3 pasas a la siguiente :D
     private int ActualLevel = 0;//Contador de niveles
 
     private final Random random = new Random();
@@ -380,7 +380,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
             touchY = (int) ejeY;
         }
         //Disparo de misiles en la esquina inferior derecha de la pantalla
-        if (ejeX >= width - nave.getAncho() && ejeY >= height - nave.getAlto()) {
+        if (ejeX >= width - nave.getAncho() && ejeY >= height - nave.getAlto() && nave.isActivo()) {
             dispara = true;
 //            poolDisparo.execute(new GenerarMisiles( nMarcianosSeguiendo,  nAsteroidesSeguiendo,
 //                    VELOCIDAD_MISIL,  width, nAciertos,  nErrores,
@@ -594,7 +594,7 @@ public class EasyEngineV1 extends SurfaceView implements SurfaceHolder.Callback,
 
     //Reinicio del juego
     public void reinicio() {
-        nPAacertadas= -1;
+        nPAacertadas= 0;
         nAciertos = 0;
         nErrores = 0;
         nAsteroidesSeguiendo = 0;

@@ -15,7 +15,7 @@ import android.widget.TextView;
  *
  * @author Sirse
  **/
-public class MainActivity extends AppCompatActivity {
+public class MenuRocket extends AppCompatActivity {
     private Button bt_start;
     ProgressBar pg_cargando;
     TextView tv_carga;
