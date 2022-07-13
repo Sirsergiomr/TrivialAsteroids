@@ -4,3 +4,5 @@ a medida que matas marcianitos con su respuesta encima, se le pasa un json con e
 y aparte de eso algunos sprites para los asteroides, el resto, pues es original, cualquier cosilla que  os haga falta decídmelo.
 
 La rama más reciente es ALPHA_0, de todas formas la master debería de contener todas las actualizaciones hechas hasta ahora.
+
+  ![TrivalAsteroid ](https://user-images.githubusercontent.com/59707784/178793821-1665c1b0-d0ae-4c37-a0a8-009d8cd993c7.jpg)
